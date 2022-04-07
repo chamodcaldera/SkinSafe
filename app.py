@@ -13,8 +13,9 @@ from PIL import Image
 from werkzeug.utils import secure_filename
 
 
-# check if the directory was created and image stored
 
+
+#prediction function
 
 def predictor(sdir, csv_path, model_path, crop_image=False):
     # read in the csv file
@@ -129,7 +130,7 @@ def upload_predict():
             image_file.save(image_location)
             working_dir = r'H:\University of westminister\Level 5\SDGP\flaskProject'
             store_path = os.path.join(working_dir, 'storage')
-            if os.path.isdir(store_path):
+            if os.path.isdir(store_path):   # deleting previous image
                 shutil.rmtree(store_path)
             os.mkdir(store_path)
             # input an image of a melanoma
