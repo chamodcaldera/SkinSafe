@@ -424,11 +424,3 @@ html {
   transform: scale(1.1);
 }
 
-.form input,.form textarea, .form select {
-  border-radius: 0;
-  box-shadow: none;
-  font-size: 14px;
-  padding: 10px;
-  border-color: #007acc;
-  border-radius: 6px;
-}
