@@ -407,28 +407,77 @@ html {
   text-shadow: 0 2px white, 0 1px #777;
   font-size: 45px;
   margin-top: 30px;
-  margin-bottom: 40px;
-}
-.gallery{
-  margin: 10px 50px;
+  margin-bottom: 20px;
 }
 
-.gallery img{
-  transition: 1s;
-  padding: 35px;
-  width: 300px;
+.container{
+    width: 75%;
+	padding: 10px 20px;
+	background: #f4f7f8;
+	margin: 10px auto;
+	padding: 20px;
+	background: #f4f7f8;
+	border-radius: 8px;
+	font-family: Georgia, "Times New Roman", Times, serif;
 }
 
-.gallery img:hover{
-  filter: grayscale(100%);
-  transform: scale(1.1);
+.container label {
+	display: block;
+	margin-bottom: 8px;
 }
 
-.form input,.form textarea, .form select {
-  border-radius: 0;
-  box-shadow: none;
-  font-size: 14px;
-  padding: 10px;
-  border-color: #007acc;
-  border-radius: 6px;
+.container input[type="text"],
+.container input[type="email"],
+.container input[type="tel"],
+.container input[type="date"],
+.container textarea,
+.container select {
+	font-family: Georgia, "Times New Roman", Times, serif;
+	background: rgba(255,255,255,.1);
+	border: none;
+	border-radius: 4px;
+	font-size: 15px;
+	margin: 0;
+	outline: 0;
+	padding: 10px;
+	width: 100%;
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	background-color: #e8eeef;
+	color:#8a97a0;
+	-webkit-box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
+	box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
+	margin-bottom: 30px;
 }
+
+.container input[type="text"]:focus,
+.container input[type="email"]:focus,
+.container input[type="tel"]:focus,
+.container input[type="date"]:focus,
+.container textarea:focus,
+.container select:focus{
+	background: #d2d9dd;
+}
+
+.container button[type="submit"] {
+  background-color: #00b3b3;
+  border: 0;
+  border-radius: 80px;
+  color: #ffffff;
+  cursor: pointer;
+  display: inline-flex;
+  font-family: Arial, sans-serif;
+  font-size: 17px;
+  margin-top: 20px;
+  padding: 9px;
+  padding-right: 22px;
+  padding-left: 22px;
+  text-align: center;
+  cursor: pointer;
+
+}
+.container button[type="submit"]:hover {
+	background: #008080;
+}
+
