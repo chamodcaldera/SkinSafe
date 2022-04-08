@@ -162,27 +162,45 @@ def registerDoctor():
 
 # add appointments
 
-# @app.route('/addChannel', methods=['POST'])
-# def add_channel():
+@app.route('/addChannel', methods=['GET','POST'])
+def add_channel():
 
- #if 'loggedin' in session:
-#if request.method=='POST' and
-#conn = mysqldb.connect()
-#cursor = conn.cursor()
+    if 'loggedin' in session:
+
+        conn = mysqldb.connect()
+        cursor = conn.cursor()
+        if request.method == 'POST' and 'appointment' in request.form:
+            name = request.form['name']
+            if(name==''):
+                appointment = request.form['appointment']
+                date,time,meridiem=appointment.split(' ')
+                hour,min = (int(x) for x in time.split(':'))
+                month,day, year = (int(x) for x in date.split('/'))
+                ans = datetime.date(year, month, day)
+                weekday=ans.strftime("%A")
+                cursor.execute('SELECT dt.docterId AS docID, dt.day AS day, dt.timeStart AS start, dt.timeEnd AS end, d.docFirstName AS firstName, d.docLastName AS lastName FROM DoctorTimeSlots dt JOIN Doctor d ON dt.docterId = d.docId WHERE day = % s', weekday)
+                doctorList = cursor.fetchall()
+                return render_template("Channeling.html", doctorList=doctorList)
+
+            elif request.method == 'POST' and 'name' in request.form and 'email' in request.form and 'mobNo' in request.form and 'appointment' in request.form and 'status' in request.form or 'message' in request.form:
+
+                email = request.form['email']
+                mobNo = request.form['mobNo']
+                confirmAppointments = request.form['appointment']
+                doctorId = request.form['doctorId']
+                status = 'Pending'
+                msg = request.form['message']
+                confirmDate, confirmTime, confirmMeridiem = confirmAppointments.split(' ')
+                sql = "INSERT INTO Chanelling(id,channel_date ,channel_time , docterId , status) VALUES(%s, %s, %s,%s, %s)"
+                data = ((session['id']), confirmDate, confirmTime, doctorId, status)
+
+                cursor.execute(sql, data)
+                conn.commit()
 
 
+        return render_template("Channeling.html",)
+    return redirect(url_for('login'))
 
-#     date = request.form['date']
-#     time = request.form['time']
-    #     doctorId = request.form['doctorId']
-    #     status = request.form['status']
-    #
-    #     sql = "INSERT INTO Chanelling(id,channel_date ,channel_time , docterId , receipt ) VALUES(%s, %s, %s,%s, %s)"
-    #     data = ((session['id']), date, time, doctorId, status,)
-    #     cursor.execute(sql, data)
-    #     conn.commit()
-    #     return render_template("channelingReceipt.html")
-    # return redirect(url_for('login'))
 
 # add prescription
 
