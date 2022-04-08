@@ -34,7 +34,7 @@
 
     <section>
         <div class="container">
-            <form action="forms/appointment.php" method="post" role="form" class="form">
+            <form action="{{ url_for('add_channel')}}" method="post" role="form" class="form">
               <div class="row">
                 <div class="col-md-4 form-group">
                   <input type="text" name="name" class="form-control" id="name" placeholder="Full Name" data-rule="minlen:4" data-msg="Please enter at least 4 chars" required>
@@ -45,7 +45,7 @@
                   <div class="validate"></div>
                 </div>
                 <div class="col-md-4 form-group mt-3 mt-md-0">
-                  <input type="tel" class="form-control" name="phone" id="phone" placeholder="Phone Number" data-rule="minlen:4" data-msg="Please enter at least 4 chars" pattern="[0-9]{10}" required>
+                  <input type="tel" class="form-control" name="mobNo" id="phone" placeholder="Phone Number" data-rule="minlen:4" data-msg="Please enter at least 4 chars" pattern="[0-9]{10}" required>
                   <div class="validate"></div>
                 </div>
               </div>
@@ -63,7 +63,7 @@
                       <div class="col-md-4 form-group mt-3">
                         <div class ="form-group">
                           <div class ='input-group date' id='datetimepicker1' >
-                            <input type ='text' class="form-control" placeholder="Appointment Date and Time" required/>
+                            <input type ='text' name ="appointment"class="form-control" placeholder="Appointment Date and Time" required/>
                             <span class ="input-group-addon">
                               <span class ="glyphicon glyphicon-calendar"></span>
                             </span>
@@ -76,11 +76,12 @@
                       </div>
 
                       <div class="col-md-4 form-group mt-3">
-                        <select name="doctor" id="doctor" class="form-select" required>
-                          <option value="">Select Doctor</option>
-                          <option value="Doctor 1">Doctor 1</option>
-                          <option value="Doctor 2">Doctor 2</option>
-                          <option value="Doctor 3">Doctor 3</option>
+                        <select name="doctorId" id="doctor" class="form-select" >
+                        <option value="">Select Doctor</option>
+                            {% for doctorList in doctorList %}
+                                <option value="{{ doctorList[0] }}">{{ doctorList[4] +" "+doctorList[5] +"("+doctorList[2] +" - "+doctorList[3]+")" }}</option>
+                            {% endfor %}
+
                         </select>
                         <div class="validate"></div>
                       </div>
