@@ -153,6 +153,9 @@ def upload_predict():
 def home():
     return render_template("home.html")
 
+@app.route('/skin', methods=['GET', 'POST'])
+def skin():
+    return render_template("scanSkin.html")
 
 if __name__ == '__main__':
     app.run(debug=True)
