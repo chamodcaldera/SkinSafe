@@ -41,11 +41,11 @@
 
                 <div class="formElement">
                     <label for="appointment">Appointment Date</label>
-                    <input type="date" onchange="validate()" name="appointment" id="appointment" required>
+                    <input type="date"  name="appointment" id="appointment" required>
                 </div>
 
                 <div>
-                    <button type="submit" value="checkOption">Check Option</button>
+                    <button type="submit" onclick="validate()" value="checkOption">Check Option</button>
                 </div>
                 <br>
 
@@ -75,16 +75,14 @@
                 
                 function validate() {
 
-
-                    
+                    document.getElementById("name").disabled = false;
+                    document.getElementById("email").disabled = false;
+                    document.getElementById("mobNo").disabled = false;
                 }
-                var a=document.getElementById("appointment").vlaue;
 
-                if (a!==""){
-                   document.getElementById("name").disabled=false;
-                }else{
-                   document.getElementById("name").disabled=true;
-                }
+
+
+
 
 
             </script>
