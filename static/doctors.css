@@ -1,0 +1,61 @@
+button {
+    padding: 10px 30px;
+    border-radius: 50px;
+    border: 0;
+    background-color: #2fd7dd;
+    box-shadow: rgb(0 0 0 / 5%) 0 0 8px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-size: 12px;
+    transition: all .5s ease;
+    margin-left: 90px;
+}
+
+button:hover {
+    letter-spacing: 3px;
+    background-color: hsl(261deg 80% 48%);
+    color: hsl(0, 0%, 100%);
+    box-shadow: rgb(93 24 220) 0px 7px 29px 0px;
+}
+
+button:active {
+    letter-spacing: 3px;
+    background-color: hsl(261deg 80% 48%);
+    color: hsl(0, 0%, 100%);
+    box-shadow: rgb(93 24 220) 0px 0px 0px 0px;
+    transform: translateY(10px);
+    transition: 100ms;
+}
+
+.search-doctor {
+    border: 1px solid rgb(70, 80, 193);
+    border-radius: 30px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    overflow-x: hidden;
+    width: 700px;
+    margin-left: 90px;
+    margin-top: 40px;
+}
+
+.search-doctor span {
+    display: inline-block;
+    padding: 0rem 1rem;
+    font-size: 1.5rem;
+}
+
+.search-doctor input {
+    height: 100%;
+    padding: .5rem;
+    border: none;
+    outline: none;
+    width: 100%;
+}
+
+.cd2 {
+    display: flex;
+    grid-gap: 2rem;
+    margin-top: 40px;
+    margin-left: 6rem;
+}
