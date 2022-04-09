@@ -35,7 +35,7 @@ app.secret_key = 'your secret key'
 
 
 # User LogIn
-@app.route('/')
+# @app.route('/')
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     msg = ''

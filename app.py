@@ -114,7 +114,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 #     return '.' in filename and \
 #            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@app.route('/c', methods=['GET', 'POST'])
+@app.route('/predict', methods=['GET', 'POST'])
 def upload_predict():
     msg = ""
 
@@ -151,7 +151,7 @@ def upload_predict():
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
-    return render_template("channelling.html")
+    return render_template("home.html")
 
 
 if __name__ == '__main__':
