@@ -126,6 +126,205 @@ def print_confumatrix(test_gen, preds, print_code, save_dir, subject):
 
 
 
+# Define a subclass of Keras callbacks that will control the learning rate and print
+# training data in spreadsheet format. The callback also includes a feature to
+# periodically ask if you want to train for N more epochs or halt
+
+
+class BaseCall(keras.callbacks.Callback):
+    def __init__(self, model, base_model, patience, stop_patience, threshold, factor, dwell, batches, initial_epoch,
+                 epochs, input_epoch):
+        super(BaseCall, self).__init__()
+        self.model = model
+        self.base_model = base_model
+        self.patience = patience  # specifies how many epochs without improvement before learning rate is adjusted
+        self.stop_patience = stop_patience  # specifies how many times to adjust lr without improvement to stop training
+        self.threshold = threshold  # specifies training accuracy threshold when lr will be adjusted based on validation loss
+        self.factor = factor  # factor by which to reduce the learning rate
+        self.dwell = dwell
+        self.batches = batches  # number of training batch to runn per epoch
+        self.initial_epoch = initial_epoch
+        self.epochs = epochs
+        self.input_epoch = input_epoch
+        self.ask_epoch_initial = input_epoch  # save this value to restore if restarting training
+        # callback variables
+        self.count = 0  # how many times lr has been reduced without improvement
+        self.stop_count = 0
+        self.best_epoch = 1  # epoch with the lowest loss
+        self.initial_lr = float(
+            tf.keras.backend.get_value(model.optimizer.lr))  # get the initiallearning rate and save it
+        self.highest_tracc = 0.0  # set highest training accuracy to 0 initially
+        self.lowest_vloss = np.inf  # set lowest validation loss to infinity initially
+        self.best_weights = self.model.get_weights()  # set best weights to model's initial weights
+        self.initial_weights = self.model.get_weights()  # save initial weights if they have to get restored
+
+    def train_begain(self, logs=None):
+        if self.base_model != None:
+            status = base_model.trainable
+            if status:
+                msg = ' initializing callback starting train with base_model trainable'
+            else:
+                msg = 'initializing callback starting training with base_model not trainable'
+        else:
+            msg = 'initialing callback and starting training'
+        # print_in_color(msg, (244, 252, 3), (55, 65, 80))
+        print(msg)
+        msg = '{0:^8s}{1:^10s}{2:^9s}{3:^9s}{4:^9s}{5:^9s}{6:^9s}{7:^10s}{8:10s}{9:^8s}'.format('Epoch', 'Loss',
+                                                                                                'Accuracy',
+                                                                                                'V_loss', 'V_acc', 'LR',
+                                                                                                'Next LR', 'Monitor',
+                                                                                                '% Improv', 'Duration')
+        print(msg)
+        self.start_time = time.time()
+
+    def train_end(self, logs=None):
+        stop_time = time.time()
+        train_duration = stop_time - self.start_time
+        hours = train_duration // 3600
+        mins = (train_duration - (hours * 3600)) // 60
+        sec = train_duration - ((hours * 3600) + (mins * 60))
+
+        self.model.set_weights(self.best_weights)  # set the weights of the model to the best weights
+        msg = f'Training is completed - model is set with weights from epoch {self.best_epoch} '
+        print(msg)
+        msg = f'training elapsed time was {str(hours)} hours, {mins:4.1f} minutes, {sec:4.2f} seconds)'
+        print(msg)
+
+    def train_batch_end(self, batch, logs=None):
+        acc = logs.get('accuracy') * 100  # get training accuracy
+        loss = logs.get('loss')
+        msg = '{0:20s}processing batch {1:4s} of {2:5s} accuracy= {3:8.3f}  loss: {4:8.5f}'.format(' ', str(batch),
+                                                                                                   str(self.batches),
+                                                                                                   acc, loss)
+        print(msg, '\r', end='')  # prints over on the same line to show running batch count
+
+    def on_epoch_begin(self, epoch, logs=None):
+        self.now = time.time()
+
+    def on_epoch_end(self, epoch, logs=None):  # method runs on the end of each epoch
+        later = time.time()
+        duration = later - self.now
+        lr = float(tf.keras.backend.get_value(self.model.optimizer.lr))  # get the current learning rate
+        current_lr = lr
+        v_loss = logs.get('val_loss')  # get the validation loss for this epoch
+        acc = logs.get('accuracy')  # get training accuracy
+        v_acc = logs.get('val_accuracy')
+        loss = logs.get('loss')
+        if acc < self.threshold:  # if training accuracy is below threshold adjust lr based on training accuracy
+            monitor = 'accuracy'
+            if epoch == 0:
+                pimprov = 0.0
+            else:
+                pimprov = (acc - self.highest_tracc) * 100 / self.highest_tracc
+            if acc > self.highest_tracc:  # training accuracy improved in the epoch
+                self.highest_tracc = acc  # set new highest training accuracy
+                self.best_weights = self.model.get_weights()  # traing accuracy improved so save the weights
+                self.count = 0  # set count to 0 since training accuracy improved
+                self.stop_count = 0  # set stop counter to 0
+                if v_loss < self.lowest_vloss:
+                    self.lowest_vloss = v_loss
+                color = (0, 255, 0)
+                self.best_epoch = epoch + 1  # set the value of best epoch for this epoch
+            else:
+                # training accuracy did not improve check if this has happened for patience number of epochs
+                # if so adjust learning rate
+                if self.count >= self.patience - 1:  # lr should be adjusted
+                    color = (245, 170, 66)
+                    lr = lr * self.factor  # adjust the learning by factor
+                    tf.keras.backend.set_value(self.model.optimizer.lr, lr)  # set the learning rate in the optimizer
+                    self.count = 0  # reset the count to 0
+                    self.stop_count = self.stop_count + 1  # count the number of consecutive lr adjustments
+                    self.count = 0  # reset counter
+                    if self.dwell:
+                        self.model.set_weights(
+                            self.best_weights)  # return to better point in N space
+                    else:
+                        if v_loss < self.lowest_vloss:
+                            self.lowest_vloss = v_loss
+                else:
+                    self.count = self.count + 1  # increment patience counter
+        else:  # training accuracy is above threshold so adjust learning rate based on validation loss
+            monitor = 'val_loss'
+            if epoch == 0:
+                pimprov = 0.0
+            else:
+                pimprov = (self.lowest_vloss - v_loss) * 100 / self.lowest_vloss
+            if v_loss < self.lowest_vloss:  # check if the validation loss improved
+                self.lowest_vloss = v_loss  # replace lowest validation loss with new validation loss
+                self.best_weights = self.model.get_weights()  # validation loss improved so save the weights
+                self.count = 0  # reset count since validation loss improved
+                self.stop_count = 0
+                color = (0, 255, 0)
+                self.best_epoch = epoch + 1  # set the value of the best epoch to this epoch
+            else:  # validation loss did not improve
+                if self.count >= self.patience - 1:  # need to adjust lr
+                    color = (245, 170, 66)
+                    lr = lr * self.factor  # adjust the learning rate
+                    self.stop_count = self.stop_count + 1  # increment stop counter because lr was adjusted
+                    self.count = 0  # reset counter
+                    tf.keras.backend.set_value(self.model.optimizer.lr, lr)  # set the learning rate in the optimizer
+                    if self.dwell:
+                        self.model.set_weights(self.best_weights)  # return to better point in N space
+                else:
+                    self.count = self.count + 1  # increment the patience counter
+                if acc > self.highest_tracc:
+                    self.highest_tracc = acc
+        msg = f'{str(epoch + 1):^3s}/{str(self.epochs):4s} {loss:^9.3f}{acc * 100:^9.3f}{v_loss:^9.5f}{v_acc * 100:^9.3f}{current_lr:^9.5f}{lr:^9.5f}{monitor:^11s}{pimprov:^10.2f}{duration:^8.2f}'
+        print(msg)
+        if self.stop_count > self.stop_patience - 1:  # check if learning rate has been adjusted stop_count times with no improvement
+            msg = f' training has been halted at epoch {epoch + 1} after {self.stop_patience} adjustments of learning rate with no improvement'
+            print(msg)
+            self.model.stop_training = True  # stop training
+        else:
+            if self.ask_epoch != None:
+                if epoch + 1 >= self.ask_epoch:
+                    if base_model.trainable:
+                        msg = 'enter H to halt  or an integer for number of epochs to run then ask again'
+                    else:
+                        msg = 'enter H to halt ,F to fine tune model, or an integer for number of epochs to run then ask again'
+                    print(msg)
+                    ans = input('')
+                    if ans == 'H' or ans == 'h':
+                        msg = f'training has been halted at epoch {epoch + 1} due to user input'
+                        print(msg)
+                        self.model.stop_training = True  # stop training
+                    elif ans == 'F' or ans == 'f':
+                        if base_model.trainable:
+                            msg = 'base_model is already set as trainable'
+                        else:
+                            msg = 'setting base_model as trainable for fine tuning of model'
+                            self.base_model.trainable = True
+                        print(msg)
+                        msg = '{0:^8s}{1:^10s}{2:^9s}{3:^9s}{4:^9s}{5:^9s}{6:^9s}{7:^10s}{8:^8s}'.format('Epoch',
+                                                                                                         'Loss',
+                                                                                                         'Accuracy',
+                                                                                                         'V_loss',
+                                                                                                         'V_acc', 'LR',
+                                                                                                         'Next LR',
+                                                                                                         'Monitor',
+                                                                                                         '% Improv',
+                                                                                                         'Duration')
+                        print(msg)
+                        self.count = 0
+                        self.stop_count = 0
+                        self.ask_epoch = epoch + 1 + self.ask_epoch_initial
+
+                    else:
+                        ans = int(ans)
+                        self.ask_epoch += ans
+                        msg = f' training will continue until epoch ' + str(self.ask_epoch)
+                        print(msg)
+                        msg = '{0:^8s}{1:^10s}{2:^9s}{3:^9s}{4:^9s}{5:^9s}{6:^9s}{7:^10s}{8:10s}{9:^8s}'.format('Epoch',
+                                                                                                                'Loss',
+                                                                                                                'Accuracy',
+                                                                                                                'V_loss',
+                                                                                                                'V_acc',
+                                                                                                                'LR',
+                                                                                                                'Next LR',
+                                                                                                                'Monitor',
+                                                                                                                '% Improv',
+                                                                                                                'Duration')
+                        print(msg)
 
 
 
