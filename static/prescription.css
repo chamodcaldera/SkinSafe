@@ -424,3 +424,25 @@ html {
   transform: scale(1.1);
 }
 
+button[type="submit"] {
+  background-color: #00b3b3;
+  border: 0;
+  border-radius: 80px;
+  color: #ffffff;
+  cursor: pointer;
+  display: inline-flex;
+  font-family: Arial, sans-serif;
+  font-size: 17px;
+  margin-top: 10px;
+  margin-left: 25px;
+  padding: 9px;
+  padding-right: 22px;
+  padding-left: 22px;
+  text-align: center;
+  cursor: pointer;
+}
+
+button[type="submit"]:hover {
+	background: #008080;
+}
+
