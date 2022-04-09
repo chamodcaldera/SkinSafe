@@ -1,16 +1,23 @@
 
 .heading{
-  text-align: center;
+  text-align: left;
+  color: #FFFFFF;
   text-transform: uppercase;
-  text-shadow: 0 2px white, 0 1px #777;
-  font-size: 45px;
-  margin-top: 30px;
-  margin-bottom: 40px;
-  font-family: Arial, sans-serif;
+  text-shadow: 0 3px black, 0 2px #004d80;
+  font-size: 55px;
+  margin-top: 25px;
+  margin-bottom: 20px;
+  font-family: Baskerville,Times,'Times New Roman',serif;
+}
+p{
+  line-height: 7px;
+  color: #FFFFFF;
+  font-family: Baskerville,Times,'Times New Roman',serif;
+  font-size: 20px;
 }
 
-label,input[type=file]{
-  margin-left: 2%;
+.heading,p,label,input[type=file]{
+  margin-left: 1%;
 }
 
 input[type=file]::file-selector-button,
@@ -22,8 +29,8 @@ input[type=submit]{
   color: #ffffff;
   cursor: pointer;
   display: inline-flex;
-  font-family: Arial, sans-serif;
-  font-size: 17px;
+  font-family: Baskerville,Times,'Times New Roman',serif;
+  font-size: 19px;
   margin-top: 20px;
   padding: 9px;
   padding-right: 22px;
@@ -33,11 +40,12 @@ input[type=submit]{
 }
 
 label{
-  font-family: Arial, sans-serif;
-  font-size: 25px;
+  font-family: Baskerville,Times,'Times New Roman',serif;
+  font-size: 27px;
   font-weight: bold;
   text-transform: uppercase;
-  color: #00334d;
+  color: #FFFFFF;
+  text-shadow: 0 2px black, 0 1px #004d80;
 }
 * {
 	box-sizing: border-box;
@@ -48,7 +56,8 @@ body {
 	line-height: 1.6;
 	margin: 0;
 	min-height: 100vh;
-    background-color: #ccffff;
+    background-image: url("scannerImage.jpg");
+   background-size: cover;
 }
 ul {
   margin: 0;
