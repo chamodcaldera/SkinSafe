@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Admin</title>
+    <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+    <link rel="stylesheet" href='admin.css'>
+    <link rel="stylesheet" href='Patients.css'>
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <h2><span class="lab la-accusoft"></span>Admin</h2>
+        </div>
+        <div class="sidebar-menu">
+            <ul>
+                <li>
+                    <a href="dashboard.html"><span class="las la-igloo"></span>
+                        <span>Dashboard</span></a>
+                </li>
+                <li>
+                    <a href="doctors.html"><span class="las la-user-nurse"></span>
+                        <span>Doctors</span></a>
+                </li>
+                <li>
+                    <a href="Patients..html" class="active"><span class="las la-procedures"></span>
+                        <span>Patients</span></a>
+                </li>
+
+                <li>
+                    <a href=""><span class="las la-clipboard-list"></span>
+                        <span>Clinic Reports</span></a>
+                </li>
+                <li>
+                    <a href=""><span class="las la-pills"></span>
+                        <span>Prescriptions</span></a>
+                </li>
+
+                <li>
+                    <a href=""><span class="las la-sign-out-alt"></span>
+                        <span>Logout</span></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <header>
+            <h2>
+                <label for="">
+                        <span class="las la-bars"></span>
+                    </label> Patients
+            </h2>
+
+            <div class="search-wrapper">
+                <span class="las la-search"></span>
+                <input type="search" placeholder="Search here" />
+            </div>
+        </header>
+
+        <main>
+            <div class="searchpper">
+                <span class="las la-search"></span>
+                <input type="search" placeholder="Search Patient" />
+            </div>
+            <button id="removepatient"> Remove Patient</button>
+
+            <div class="cd1">
+                <span id="cd">search result appear here.</span>
+            </div>
+        </main>
+
+    </div>
+
+</body>
+
+</html>
