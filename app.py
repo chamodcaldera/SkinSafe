@@ -152,10 +152,10 @@ def upload_predict():
 @app.route('/', methods=['GET', 'POST'])
 def home():
     return render_template("home.html")
-
-@app.route('/skin', methods=['GET', 'POST'])
-def skin():
-    return render_template("scanSkin.html")
+#
+# @app.route('/chanel', methods=['GET', 'POST'])
+# def cha():
+#     return render_template("channelling.html")
 
 if __name__ == '__main__':
     app.run(debug=True)
