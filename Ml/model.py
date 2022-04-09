@@ -130,6 +130,78 @@ def print_confumatrix(test_gen, preds, print_code, save_dir, subject):
 
 
 
+def train_plot(train_data, start_epoch):
+    # Plot the training and validation data
+    tacc = train_data.history['accuracy']
+    tr_dataloss = train_data.history['loss']
+    vacc = train_data.history['val_accuracy']
+    val_dataloss = train_data.history['val_loss']
+    Epoch_count = len(tacc) + start_epoch
+    Epochs = []
+    for i in range(start_epoch, Epoch_count):
+        Epochs.append(i + 1)
+    index_loss = np.argmin(val_dataloss)  # this is the epoch with the lowest validation loss
+    val_lowest = val_dataloss[index_loss]
+    index_acc = np.argmax(vacc)
+    account_high = vacc[index_acc]
+    plt.style.use('fivethirtyeight')
+    sc_label = 'best epoch= ' + str(index_loss + 1 + start_epoch)
+    vc_label = 'best epoch= ' + str(index_acc + 1 + start_epoch)
+    fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(20, 8))
+    axes[0].plot(Epochs, tr_dataloss, 'r', label='Training loss')
+    axes[0].plot(Epochs, val_dataloss, 'g', label='Validation loss')
+    axes[0].scatter(index_loss + 1 + start_epoch, val_lowest, s=150, c='blue', label=sc_label)
+    axes[0].set_title('Training and Validation Loss')
+    axes[0].set_xlabel('Epochs')
+    axes[0].set_ylabel('Loss')
+    axes[0].legend()
+    axes[1].plot(Epochs, tacc, 'r', label='Training Accuracy')
+    axes[1].plot(Epochs, vacc, 'g', label='Validation Accuracy')
+    axes[1].scatter(index_acc + 1 + start_epoch, account_high, s=150, c='blue', label=vc_label)
+    axes[1].set_title('Training and Validation Accuracy')
+    axes[1].set_xlabel('Epochs')
+    axes[1].set_ylabel('Accuracy')
+    axes[1].legend()
+    plt.tight_layout
+
+    plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+#function to returns a dataframe where the number of samples for any class specified by column is limited to max samples
+
+
+def trim_img(dataframe, max_size, min_size, column):
+    dataframe = dataframe.copy()
+    temp_list = []
+    groups = dataframe.groupby(column)
+    for label in dataframe[column].unique():
+        group = groups.get_group(label)
+        ex_count = len(group)
+        if ex_count > max_size:
+            samples = group.sample(max_size, replace=False, weights=None, random_state=123, axis=0).reset_index(
+                drop=True)
+            temp_list.append(samples)
+        elif ex_count >= min_size:
+            temp_list.append(group)
+    dataframe = pd.concat(temp_list, axis=0).reset_index(drop=True)
+    bal = list(dataframe[column].value_counts())
+    print(bal)
+    return dataframe
+
+
+
+
 
 
 # Function for save ml model
@@ -201,7 +273,7 @@ train_df, test_df, valid_df = preprocessdata(sdir, .8, .1)
 
 def balance_data(train_df, max_samples, min_samples, column, working_dir, image_size):
     train_df = train_df.copy()
-    train_df = trim(train_df, max_samples, min_samples, column)
+    train_df = trim_img(train_df, max_samples, min_samples, column)
     # make directories to store augmented images
     aug_dir = os.path.join(working_dir, 'aug')
     if os.path.isdir(aug_dir):
@@ -320,7 +392,7 @@ history = model.fit(x=train_gen, epochs=epochs, verbose=0, callbacks=callbacks, 
 # evaluate model
 # save the model
 
-tr_plot(history, 0)
+train_plot(history, 0)
 sub = 'skin disease'
 acc = model.evaluate(test_gen, batch_size=test_batch_size, verbose=1, steps=test_steps, return_dict=False)[1] * 100
 msg = f'accuracy on the test set is {acc:5.2f} %'
@@ -335,6 +407,46 @@ preds=model.predict(test_gen, steps=test_steps, verbose=1)
 print_confumatrix( test_gen, preds, print_code, working_dir, subject )
 
 
+
+
+# function for plot the training data
+
+
+def train_plot(tr_data, start_epoch):
+    # Plot the training and validation data
+    tacc = tr_data.history['accuracy']
+    tloss = tr_data.history['loss']
+    vacc = tr_data.history['val_accuracy']
+    vloss = tr_data.history['val_loss']
+    Epoch_count = len(tacc) + start_epoch
+    Epochs = []
+    for i in range(start_epoch, Epoch_count):
+        Epochs.append(i + 1)
+    index_loss = np.argmin(vloss)  # this is the epoch with the lowest validation loss
+    val_lowest = vloss[index_loss]
+    index_acc = np.argmax(vacc)
+    acc_highest = vacc[index_acc]
+    plt.style.use('fivethirtyeight')
+    sc_label = 'best epoch= ' + str(index_loss + 1 + start_epoch)
+    vc_label = 'best epoch= ' + str(index_acc + 1 + start_epoch)
+    fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(20, 8))
+    axes[0].plot(Epochs, tloss, 'r', label='Training loss')
+    axes[0].plot(Epochs, vloss, 'g', label='Validation loss')
+    axes[0].scatter(index_loss + 1 + start_epoch, val_lowest, s=150, c='blue', label=sc_label)
+    axes[0].set_title('Training and Validation Loss')
+    axes[0].set_xlabel('Epochs')
+    axes[0].set_ylabel('Loss')
+    axes[0].legend()
+    axes[1].plot(Epochs, tacc, 'r', label='Training Accuracy')
+    axes[1].plot(Epochs, vacc, 'g', label='Validation Accuracy')
+    axes[1].scatter(index_acc + 1 + start_epoch, acc_highest, s=150, c='blue', label=vc_label)
+    axes[1].set_title('Training and Validation Accuracy')
+    axes[1].set_xlabel('Epochs')
+    axes[1].set_ylabel('Accuracy')
+    axes[1].legend()
+    plt.tight_layout
+    # plt.style.use('fivethirtyeight')
+    plt.show()
 
 
 
