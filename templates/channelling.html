@@ -26,22 +26,22 @@
 
                 <div class="formElement">
                     <label for="name">Full Name</label>
-                    <input type="text" name="name" class="form-control" id="name" placeholder="Full Name" required>
+                    <input type="text" name="name" class="form-control" id="name" disabled="disabled" placeholder="Full Name" required>
                 </div>
 
                 <div class="formElement">
                     <label for="email">Email</label>
-                    <input type="email" class="form-control" name="email" id="email" placeholder="Email" required>
+                    <input type="email" class="form-control" name="email" id="email" disabled="disabled" placeholder="Email" required>
                 </div>
 
                 <div class="formElement">
                     <label for="mobNo">Phone Number</label>
-                    <input type="tel" class="form-control" name="mobNo" id="mobNo" placeholder="Phone Number" pattern="[0-9]{10}" required>
+                    <input type="tel" class="form-control" name="mobNo" id="mobNo" placeholder="Phone Number" disabled="disabled" pattern="[0-9]{10}" required>
                 </div>
 
                 <div class="formElement">
                     <label for="appointment">Appointment Date</label>
-                    <input type="date" name="appointment" id="appointment" required>
+                    <input type="date" onchange="validate()" name="appointment" id="appointment" required>
                 </div>
 
                 <div>
@@ -70,6 +70,25 @@
             </form>
         </div>
       </section>
+
+            <script type="text/javascript">
+                
+                function validate() {
+
+
+                    
+                }
+                var a=document.getElementById("appointment").vlaue;
+
+                if (a!==""){
+                   document.getElementById("name").disabled=false;
+                }else{
+                   document.getElementById("name").disabled=true;
+                }
+
+
+            </script>
+
 
 
     <footer>
