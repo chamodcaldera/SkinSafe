@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title> User Setting Sample</title>
+	<link rel="stylesheet" href="../static/styleProfile.css">
+	<link rel="stylesheet" href="../static/fontawesome/css/font-awesome.min.css">
+</head>
+<body>
+
+	<div class="container" id="blur">
+		<div class="content">
+			<h2>some text</h2>
+			<a href="#" onclick="toggle()">Read More</a>
+		</div>
+	</div>
+	<div class="containerProfile" id="popup">
+		<div class="leftbox">
+
+			<nav class="navProf" style="padding-top: 20px">
+				<a onclick="tabs(0)" class="tab" >
+					<i class="fa fa-user"></i>
+				</a>
+				<a onclick="tabs(1)" class="tab">
+					<i class="fa fa-cog"></i>
+				</a>
+
+				<a onclick="tabs(2)" class="tab">
+					<i class="fa fa-key"></i>
+				</a>
+
+				<a onclick="tabs(3)" class="tab">
+                    <i class="fa fa-medkit"></i>
+                </a>
+
+            </nav>
+		</div>
+		<div class="rightbox">
+            <a name="profileSection"></a>
+			<div class="profile tabShow">
+				<h1 class="h1">Personal Info</h1>
+                <table>
+                    <tr>
+                        <td class="tdata">
+                          <h2 class="h2">Full Name</h2>
+                          <p>{{ account[1] + " " +account[2]}}</p>
+                        </td>
+                        <td class="tdata">
+                            <h2 class="h2">User ID </h2>
+                            <p> {{ account[0] }}</p>
+
+                        </td>
+                    </tr>
+                </table>
+                <table>
+                    <tr>
+                        <td class="tdata">
+                            <h2 class="h2">Age</h2>
+                            <p>{{ account[3] }}</p>
+                        </td>
+                        <td class="tdata">
+                            <h2 class="h2">Gender</h2>
+                            <p>{{ account[6] }}</p>
+                        </td>
+                    </tr>
+                </table>
+
+                <h2 class="h2">Address</h2>
+				<p>{{ account[7] }}</p>
+
+				<h2 class="h2">Email</h2>
+				<p>{{ account[4] }}</p>
+
+				<h2 class="h2">Mobile no</h2>
+				<p>{{ account[8] }}</p>
+				<a href="#" onclick="toggle()"><button class="btn">Cancel</button></a>
+
+
+			</div>
+
+
+			<div class="profileEdit tabShow">
+				<h1 class="h1"  >Edit Profile</h1>
+                <div id="message" >{{ msg }}</div>
+                <form action="{{ url_for('updateUser') }}" method="post" autocomplete="off">
+                    <table>
+					<tr>
+						<td class="tdata">
+							<h2 class="h2">First Name</h2>
+							<input type="text" class="inputProf" value={{ account[1]}} name="firstname">
+						</td>
+
+						<td class="tdata">
+							<h2 class="h2">Last Name</h2>
+							<input type="text" class="inputProf" value= {{account[2]}}  name="lastname">
+						</td>
+					</tr>
+				</table>
+                    <table>
+                        <tr>
+                            <td class="tdata"><h2 class="h2">Age</h2>
+                            <input type="text" class="inputProf" value={{ account[3] }}  name="age">
+                            </td>
+
+
+                            <td class="tdata">
+                                <h2 class="h2">Gender</h2>
+                                <input type="text" class="inputProf" value={{ account[6] }} readonly >
+                            </td>
+
+                        </tr>
+                    </table>
+
+				    <h2 class="h2">Address</h2>
+				    <input type="text" class="inputProf" value={{ account[7] }}  name="address" >
+
+				    <h2 class="h2">Email</h2>
+				    <input type="text" class="inputProf" value={{ account[4] }} readonly>
+
+				    <h2 class="h2">Mobile Number</h2>
+				    <input type="text" class="inputProf" value={{ account[8] }} name="mobNo" >
+                    <table>
+                        <tr>
+                            <td class="tdata">
+							    <a href="#" onclick="toggle()"><button class="btn">Cancel</button></a>
+                            </td>
+                            <td class="tdata">
+                                <button type="submit" class="btn">Update</button>
+                            </td>
+                        </tr>
+                    </table>
+
+
+                </form>
+            </div>
+
+			<div  class="passwordChange tabShow">
+				<h1 class="h1">Change Password</h1>
+                <form action="{{ url_for('updatePassword') }}" method="post" autocomplete="off">
+                    <div id="message2">{{ msg }}</div>
+                    <input type="hidden" value={{ account[0] }}  name="age">
+				    <h2 class="h2">Enter Your Email</h2>
+				    <input type="text" name ="email" class="inputProf" required>
+
+				    <h2 class="h2">Old Password</h2>
+				    <input type="password" name ="oldPass"  class="inputProf" required>
+
+				    <h2 class="h2">New Password</h2>
+				    <input type="password" name ="newPass" class="inputProf" required>
+
+				    <h2 class="h2">Re-Enter Password</h2>
+				    <input type="password" name ="finalPass" class="inputProf" required>
+
+                    <table>
+                        <tr>
+                            <td class="tdata">
+							    <a href="#" onclick="toggle()" ><button class="btn">Cancel</button></a>
+                            </td>
+                            <td class="tdata">
+                                <button  type="submit" class="btn">Update</button>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+
+
+			</div>
+
+			<div class="channeling tabShow">
+				<h1 class="h1">Channeling</h1>
+                <div id="message3">{{ msg }}</div>
+                <form action="{{ url_for('channelling') }}" method="post" autocomplete="off">
+
+                    <div class="scrollDiv">
+
+                        {% for record in record %}
+
+                            <div class="receipt">
+                                <h3 class="center">Channeling Receipt</h3>
+                                <hr>
+                                <table>
+                                    <tr>
+                                        <td>Name : </td>
+                                        <td>{{ record[1] }}</td>
+
+                                    </tr>
+                                    <tr>
+                                        <td>Receipt No : </td>
+                                        <td>{{ record[0] }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Doctor Name : </td>
+                                        <td>{{ record[4]+" "+ record[5]}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Date :  </td>
+                                        <td>{{ record[2] }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Time :  </td>
+                                        <td>{{ record[6] }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Status: </td>
+                                        <td>{{ record[3] }}</td>
+
+                                    </tr>
+                                    <tr>
+
+                                         <td><button type="submit" class="btn" value="{{ record[0] }}" name="channelId" onclick="{{ url_for('channelling') }} ">DELETE</button></td>
+{#                                        <td><input type="submit" name="channelId" value="{{ record[0] }}"></td>#}
+
+                                    </tr>
+                                </table>
+                            </div>
+                            <br>
+
+                        {% endfor %}
+
+                </div>
+                    <table>
+                    <tr>
+                        <td class="tdata">
+							<a href="index.html" onclick="toggle()"><button class="btn">Cancel</button></a>
+                        </td>
+                        <td class="tdata">
+                            <button class="btn" type="submit">REFRESH</button>
+                        </td>
+
+                    </tr>
+                </table>
+
+                </form>
+
+
+			</div>
+		</div>
+	</div>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+	<script>
+        const tabBtn =document.querySelectorAll(".tab");
+        const tab = document.querySelectorAll(".tabShow");
+
+        function tabs(panelIndex){
+            tab.forEach(function(node){
+                node.style.display ="none";
+            });
+            tab[panelIndex].style.display = "block";
+        }
+        tabs({{ tab }});
+
+        function toggle() {
+            var blur=document.getElementById('blur');
+            blur.classList.toggle('active')
+            var popup=document.getElementById('popup');
+            popup.classList.toggle('active')
+        }
+	</script>
+	<script>
+        $(".tab").click(function(){
+            $(this).addClass("active").siblings().removeClass("active");
+        })
+	</script>
+
+	<script type="text/javascript">
+        function toggle() {
+            var blur=document.getElementById('blur');
+            blur.classList.toggle('active')
+            var popup=document.getElementById('popup');
+            popup.classList.toggle('active')
+
+        }
+
+	</script>
+
+    <script>
+
+        setTimeout(function(){
+            var msg=document.getElementById("message");
+            msg.parentNode.removeChild(msg);
+        },3000)
+
+        setTimeout(function(){
+            var msg=document.getElementById("message2");
+            msg.parentNode.removeChild(msg);
+        },3000)
+        setTimeout(function(){
+            var msg=document.getElementById("message3");
+            msg.parentNode.removeChild(msg);
+        },3000)
+
+    </script>
+
+    </body>
+</html>
