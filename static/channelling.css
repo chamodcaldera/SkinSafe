@@ -2,11 +2,11 @@
 	box-sizing: border-box;
 }
 body {
-	font-family: 'Montserrat', sans-serif;
+	font-family: Baskerville,Times,'Times New Roman',serif;
 	line-height: 1.6;
 	margin: 0;
 	min-height: 100vh;
-    background-color: #80bfff;
+    background-color: #FFFFFF;
 }
 ul {
   margin: 0;
@@ -23,8 +23,6 @@ a {
 a {
 	text-decoration: none;
 }
-
-
 
 .logo {
 	margin: 0;
@@ -404,7 +402,7 @@ html {
 .heading{
   text-align: center;
   text-transform: uppercase;
-  text-shadow: 0 2px white, 0 1px #777;
+  text-shadow: 0 3px white, 0 1px #777;
   font-size: 45px;
   margin-top: 30px;
   margin-bottom: 20px;
@@ -413,17 +411,18 @@ html {
 .container{
     width: 75%;
 	padding: 10px 20px;
-	background: #f4f7f8;
+	background: #0099cc;
 	margin: 10px auto;
 	padding: 20px;
-	background: #f4f7f8;
 	border-radius: 8px;
-	font-family: Georgia, "Times New Roman", Times, serif;
+	font-family: Baskerville,Times,'Times New Roman',serif;
+    font-size: 20px;
 }
 
 .container label {
 	display: block;
 	margin-bottom: 8px;
+    font-weight: bold;
 }
 
 .container input[type="text"],
@@ -432,8 +431,7 @@ html {
 .container input[type="date"],
 .container textarea,
 .container select {
-	font-family: Georgia, "Times New Roman", Times, serif;
-	background: rgba(255,255,255,.1);
+	font-family: Baskerville,Times,'Times New Roman',serif;
 	border: none;
 	border-radius: 4px;
 	font-size: 15px;
@@ -442,12 +440,8 @@ html {
 	padding: 10px;
 	width: 100%;
 	box-sizing: border-box;
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
 	background-color: #e8eeef;
 	color:#8a97a0;
-	-webkit-box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
-	box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
 	margin-bottom: 30px;
 }
 
@@ -467,8 +461,8 @@ html {
   color: #ffffff;
   cursor: pointer;
   display: inline-flex;
-  font-family: Arial, sans-serif;
-  font-size: 17px;
+  font-family: Baskerville,Times,'Times New Roman',serif;
+  font-size: 18px;
   margin-top: 20px;
   padding: 9px;
   padding-right: 22px;
