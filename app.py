@@ -187,29 +187,11 @@ def home():
 def login_new():
     msg = ''
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
-        checkAdmin=request.form['admin']
         username = request.form['username']
         password = request.form['password']
         conn = mysqldb.connect()
         cursor = conn.cursor()
-        if checkAdmin:
-            cursor.execute('SELECT * FROM Admin WHERE email = %s ', (username))
-            account = cursor.fetchone()
-            if account:
-                check = check_password_hash(account[4], password)
-                if check:
-                    session['loggedin'] = True
-                    session['id'] = account[0]
-                    session['username'] = account[3]
-                    msg = 'Logged in successfully !'
-                    return render_template('home.html')
-                else:
-                    msg = 'Incorrect username / password !'
-
-            else:
-                msg = 'Account dose not exist From this email address '
-        else:
-
+        if request.form['admin']== null:
             cursor.execute('SELECT * FROM User WHERE email = %s ', (username))
             account = cursor.fetchone()
             if account:
@@ -220,6 +202,23 @@ def login_new():
                     session['username'] = account[4]
                     msg = 'Logged in successfully !'
                     return render_template('main.html')
+                else:
+                    msg = 'Incorrect username / password !'
+
+            else:
+                msg = 'Account dose not exist From this email address '
+        else:
+
+            cursor.execute('SELECT * FROM Admin WHERE email = %s ', (username))
+            account = cursor.fetchone()
+            if account:
+                check = check_password_hash(account[4], password)
+                if check:
+                    session['loggedin'] = True
+                    session['id'] = account[0]
+                    session['username'] = account[3]
+                    msg = 'Logged in successfully !'
+                    return render_template('home.html')
                 else:
                     msg = 'Incorrect username / password !'
 
