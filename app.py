@@ -192,55 +192,74 @@ def chan():
 def login_new():
     msg = ''
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
+        checkAdmin=request.form['admin']
         username = request.form['username']
         password = request.form['password']
         conn = mysqldb.connect()
         cursor = conn.cursor()
-        cursor.execute('SELECT * FROM User WHERE email = %s ', (username))
-        account = cursor.fetchone()
-        if account:
-            check = check_password_hash(account[5], password)
-            if check:
-                session['loggedin'] = True
-                session['id'] = account[0]
-                session['username'] = account[4]
-                msg = 'Logged in successfully !'
-                return render_template('main.html')
-            else:
-                msg = 'Incorrect username / password !'
+        if checkAdmin:
+            cursor.execute('SELECT * FROM Admin WHERE email = %s ', (username))
+            account = cursor.fetchone()
+            if account:
+                check = check_password_hash(account[4], password)
+                if check:
+                    session['loggedin'] = True
+                    session['id'] = account[0]
+                    session['username'] = account[3]
+                    msg = 'Logged in successfully !'
+                    return render_template('home.html')
+                else:
+                    msg = 'Incorrect username / password !'
 
+            else:
+                msg = 'Account dose not exist From this email address '
         else:
-            msg = 'Account dose not exist From this email address '
+
+            cursor.execute('SELECT * FROM User WHERE email = %s ', (username))
+            account = cursor.fetchone()
+            if account:
+                check = check_password_hash(account[5], password)
+                if check:
+                    session['loggedin'] = True
+                    session['id'] = account[0]
+                    session['username'] = account[4]
+                    msg = 'Logged in successfully !'
+                    return render_template('main.html')
+                else:
+                    msg = 'Incorrect username / password !'
+
+            else:
+                msg = 'Account dose not exist From this email address '
 
     return render_template('login.html', msg=msg)
 
 
 
-@app.route('/loginAdmin', methods=['GET', 'POST'])
-def login_admin():
-    msg = ''
-    if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
-        username = request.form['username']
-        password = request.form['password']
-        conn = mysqldb.connect()
-        cursor = conn.cursor()
-        cursor.execute('SELECT * FROM Admin WHERE email = %s ', (username))
-        account = cursor.fetchone()
-        if account:
-            check = check_password_hash(account[4], password)
-            if check:
-                session['loggedin'] = True
-                session['id'] = account[0]
-                session['username'] = account[3]
-                msg = 'Logged in successfully !'
-                return render_template('home.html')
-            else:
-                msg = 'Incorrect username / password !'
-
-        else:
-            msg = 'Account dose not exist From this email address '
-
-    return render_template('admindashboard.html', msg=msg)
+# @app.route('/loginAdmin', methods=['GET', 'POST'])
+# def login_admin():
+#     msg = ''
+#     if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
+#         username = request.form['username']
+#         password = request.form['password']
+#         conn = mysqldb.connect()
+#         cursor = conn.cursor()
+#         cursor.execute('SELECT * FROM Admin WHERE email = %s ', (username))
+#         account = cursor.fetchone()
+#         if account:
+#             check = check_password_hash(account[4], password)
+#             if check:
+#                 session['loggedin'] = True
+#                 session['id'] = account[0]
+#                 session['username'] = account[3]
+#                 msg = 'Logged in successfully !'
+#                 return render_template('home.html')
+#             else:
+#                 msg = 'Incorrect username / password !'
+#
+#         else:
+#             msg = 'Account dose not exist From this email address '
+#
+#     return render_template('admindashboard.html', msg=msg)
 
 
 
