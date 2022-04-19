@@ -12,6 +12,9 @@ import shutil
 from PIL import Image
 from werkzeug.utils import secure_filename
 
+import application
+from application import login_new
+
 
 # check if the directory was created and image stored
 
@@ -152,10 +155,13 @@ def upload_predict():
 @app.route('/', methods=['GET', 'POST'])
 def home():
     return render_template("home.html")
+
 #
 # @app.route('/chanel', methods=['GET', 'POST'])
 # def cha():
 #     return render_template("channelling.html")
 
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.add_url_rule('/login', view_func=application.login_new)
+    app.run(host="localhost", port=int("5000"))

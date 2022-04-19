@@ -37,7 +37,7 @@ app.secret_key = 'your secret key'
 # User LogIn
 # @app.route('/')
 @app.route('/login', methods=['GET', 'POST'])
-def login():
+def login_new():
     msg = ''
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
         username = request.form['username']
@@ -53,7 +53,7 @@ def login():
                 session['id'] = account[0]
                 session['username'] = account[4]
                 msg = 'Logged in successfully !'
-                return render_template('index.html', msg=msg)
+                return render_template('main.html')
             else:
                 msg = 'Incorrect username / password !'
 
@@ -88,7 +88,7 @@ def login_admin():
         else:
             msg = 'Account dose not exist From this email address '
 
-    return render_template('login.html', msg=msg)
+    return render_template('admindashboard.html', msg=msg)
 
 # register user
 @app.route('/registerUser', methods=['GET', 'POST'])
@@ -210,7 +210,7 @@ def add_channel():
                 weekday=ans.strftime("%A")
                 cursor.execute('SELECT dt.docterId AS docID, dt.day AS day, dt.timeStart AS start, dt.timeEnd AS end, d.docFirstName AS firstName, d.docLastName AS lastName FROM DoctorTimeSlots dt JOIN Doctor d ON dt.docterId = d.docId WHERE day = % s', weekday)
                 doctorList = cursor.fetchall()
-                return render_template("Channeling.html", doctorList=doctorList)
+                return render_template("channelling.html", doctorList=doctorList)
 
             elif request.method == 'POST' and 'name' in request.form and 'email' in request.form and 'mobNo' in request.form and 'appointment' in request.form and 'status' in request.form or 'message' in request.form:
 
@@ -228,7 +228,7 @@ def add_channel():
                 conn.commit()
 
 
-        return render_template("Channeling.html",)
+        return render_template("channelling.html",)
     return redirect(url_for('login'))
 
 
