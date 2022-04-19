@@ -1,4 +1,3 @@
-import secrets
 
 import keras
 from flask import Flask, request, render_template, flash, redirect, jsonify, url_for
