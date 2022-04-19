@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 from PIL.ImageOps import crop
 from matplotlib import pyplot as plt
+from pyasn1.compat.octets import null
 from tensorflow.python.keras.models import load_model
 import tensorflow as tf
 import os
@@ -191,7 +192,23 @@ def login_new():
         password = request.form['password']
         conn = mysqldb.connect()
         cursor = conn.cursor()
-        if request.form['admin']== None:
+        if request.form.get('admin') == 'on':
+            cursor.execute('SELECT * FROM Admin WHERE email = %s ', (username))
+            account = cursor.fetchone()
+            if account:
+                # check = check_password_hash(account[4], password)
+                if account[4]==password:
+                    session['loggedin'] = True
+                    session['id'] = account[0]
+                    session['username'] = account[3]
+                    msg = 'Logged in successfully !'
+                    return render_template('home.html')
+                else:
+                    msg = 'Incorrect username / password !'
+
+            else:
+                msg = 'Account dose not exist From this email address '
+        else:
             cursor.execute('SELECT * FROM User WHERE email = %s ', (username))
             account = cursor.fetchone()
             if account:
@@ -207,23 +224,7 @@ def login_new():
 
             else:
                 msg = 'Account dose not exist From this email address '
-        else:
 
-            cursor.execute('SELECT * FROM Admin WHERE email = %s ', (username))
-            account = cursor.fetchone()
-            if account:
-                check = check_password_hash(account[4], password)
-                if check:
-                    session['loggedin'] = True
-                    session['id'] = account[0]
-                    session['username'] = account[3]
-                    msg = 'Logged in successfully !'
-                    return render_template('home.html')
-                else:
-                    msg = 'Incorrect username / password !'
-
-            else:
-                msg = 'Account dose not exist From this email address '
 
     return render_template('login.html', msg=msg)
 
