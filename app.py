@@ -191,7 +191,7 @@ def login_new():
         password = request.form['password']
         conn = mysqldb.connect()
         cursor = conn.cursor()
-        if request.form['admin']== null:
+        if request.form['admin']== None:
             cursor.execute('SELECT * FROM User WHERE email = %s ', (username))
             account = cursor.fetchone()
             if account:
