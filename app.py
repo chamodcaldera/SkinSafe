@@ -1,3 +1,5 @@
+import secrets
+
 import keras
 from flask import Flask, request, render_template, flash, redirect, jsonify, url_for
 import cv2
@@ -29,8 +31,14 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from saveImage import insertBLOB
 
 connection()
-
-app.secret_key = 'your secret key'
+app = Flask(__name__)
+# app.secret_key = 'dd hh'
+# secret = secrets.token_urlsafe(32)
+#
+# app.secret_key = secret
+app.secret_key = 'super secret key'
+# app.config['SESSION_TYPE'] = 'filesystem'
+# sess.init_app(app)
 
 
 
@@ -127,7 +135,7 @@ model_path = r'EfficientNetB3-skin disease-85.45.h5'
 UPLOAD_FOLDER = r'H:\University of westminister\Level 5\SDGP\flaskProject\images'
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
-app = Flask(__name__)
+# app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
@@ -202,12 +210,151 @@ def login_new():
     return render_template('login.html', msg=msg)
 
 
-#
-# @app.route('/chanel', methods=['GET', 'POST'])
-# def cha():
-#     return render_template("channelling.html")
+
+@app.route('/loginAdmin', methods=['GET', 'POST'])
+def login_admin():
+    msg = ''
+    if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
+        username = request.form['username']
+        password = request.form['password']
+        conn = mysqldb.connect()
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM Admin WHERE email = %s ', (username))
+        account = cursor.fetchone()
+        if account:
+            check = check_password_hash(account[4], password)
+            if check:
+                session['loggedin'] = True
+                session['id'] = account[0]
+                session['username'] = account[3]
+                msg = 'Logged in successfully !'
+                return render_template('home.html')
+            else:
+                msg = 'Incorrect username / password !'
+
+        else:
+            msg = 'Account dose not exist From this email address '
+
+    return render_template('admindashboard.html', msg=msg)
+
+
+
+# register user
+@app.route('/registerUser', methods=['GET', 'POST'])
+def register():
+    msg = ''
+    if request.method == 'POST' and 'firstname' in request.form and 'lastname' in request.form and 'age' in request.form and 'email' in request.form and 'password' in request.form and 'gender' in request.form and 'address' in request.form and 'mobNo' in request.form:
+        firstname = request.form['firstname']
+        lastname = request.form['lastname']
+        age = request.form['age']
+        email = request.form['email']
+        password = request.form['password']
+        address = request.form['address']
+        gender = request.form['gender']
+        mobileNo = request.form['mobNo']
+
+
+        conn = mysqldb.connect()
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM User WHERE email = %s', (email,))
+        account = cursor.fetchone()
+        if account:
+            msg = 'Account already exists !'
+        elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
+            msg = 'Invalid email address !'
+        elif containsNumber(firstname) or containsNumber(lastname):
+            msg = 'First name and Last name must contain only characters!'
+        # elif gender.lower()!='female' or gender.lower()!='female' :
+        #     msg = 'Gender'
+        elif validate(mobileNo) or len(mobileNo)>10:
+            # must see the validation here
+            msg = 'Phone Number must contain only 10 numbers!'
+
+        else:
+
+            # do not save password as a plain text
+            _hashed_password = generate_password_hash(password)
+            # save edits
+            sql = "INSERT INTO User(firstName,lastName, age, email, password, gender, address, mobileNo) VALUES(%s, %s, %s,%s, %s, %s,%s, %s)"
+            data = (firstname, lastname, age,email,_hashed_password, gender, address, mobileNo,)
+            # conn = mysql.connect()
+            # cursor = conn.cursor()
+            cursor.execute(sql, data)
+            conn.commit()
+            msg = 'You have successfully registered\n Login again! !'
+            # return render_template('index.html.html', msg=msg)
+
+
+    elif request.method == 'POST':
+
+        msg = 'Please fill out the form !'
+    return render_template('register.html',msg=msg)
+
+# doctor register
+@app.route('/registerDoctor', methods=['GET', 'POST'])
+def registerDoctor():
+    msg = ''
+    if request.method == 'POST' and 'firstname' in request.form and 'lastname' in request.form and 'age' in request.form and 'email' in request.form and 'password' in request.form and 'gender' in request.form and 'address' in request.form and 'mobNo' in request.form:
+        firstname = request.form['firstname']
+        lastname = request.form['lastname']
+        age = request.form['age']
+        email = request.form['email']
+        password = request.form['password']
+        address = request.form['address']
+        gender = request.form['gender']
+        mobileNo = request.form['mobNo']
+
+
+        conn = mysqldb.connect()
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM Doctor WHERE email = %s', (email,))
+        account = cursor.fetchone()
+        if account:
+            msg = 'Account already exists !'
+        elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
+            msg = 'Invalid email address !'
+        elif containsNumber(firstname) or containsNumber(lastname):
+            msg = 'First name and Last name must contain only characters!'
+        elif validate(mobileNo) or len(mobileNo)>10:
+            # must see the validation here
+            msg = 'Phone Number must contain only 10 numbers!'
+
+        else:
+
+            # do not save password as a plain text
+            _hashed_password = generate_password_hash(password)
+            # save edits
+            sql = "INSERT INTO Doctor(docFirstName  ,docLastName ,docAge  ,docEmail, docPassword, docGender ,docAddress , docMobileNo ) VALUES(%s, %s, %s,%s, %s, %s,%s, %s)"
+            data = (firstname, lastname, age,email,_hashed_password, gender, address, mobileNo,)
+            # conn = mysql.connect()
+            # cursor = conn.cursor()
+            cursor.execute(sql, data)
+            conn.commit()
+            msg = 'You have successfully registered !'
+            # return render_template('index.html.html', msg=msg)
+
+
+    elif request.method == 'POST':
+
+        msg = 'Please fill out the form !'
+    return render_template('register.html', msg=msg)
+
+# add appointments
+def containsNumber(value):
+    for character in value:
+        if character.isdigit():
+            return True
+    return False
+def validate(value):
+    for character in value:
+        if character.isdigit():
+            return False
+    return True
 
 
 if __name__ == '__main__':
+
+
+
 
     app.run(host="localhost", port=int("5000"))

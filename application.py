@@ -18,7 +18,7 @@ connection()
 
 app = Flask(__name__)
 
-app.secret_key = 'your secret key'
+# app.secret_key = 'your secret key'
 # mysql = MySQL()
 # MySQL configurations
 # app.config['MYSQL_DATABASE_USER'] = 'root'
