@@ -12,8 +12,26 @@ import shutil
 from PIL import Image
 from werkzeug.utils import secure_filename
 
-import application
-from application import login_new
+# Store this code in 'app.py' file
+from datetime import datetime
+
+from flask import Flask, render_template, request, redirect, url_for, session, flash
+# from flask_mysqldb import MySQL
+# import MySQLdb.cursors
+# import pymysql
+import re
+import os
+
+
+from dbConnection import *
+from setUp import connection
+from werkzeug.security import generate_password_hash, check_password_hash
+from saveImage import insertBLOB
+
+connection()
+
+app.secret_key = 'your secret key'
+
 
 
 # check if the directory was created and image stored
@@ -156,6 +174,34 @@ def upload_predict():
 def home():
     return render_template("home.html")
 
+
+@app.route('/login', methods=['GET', 'POST'])
+def login_new():
+    msg = ''
+    if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
+        username = request.form['username']
+        password = request.form['password']
+        conn = mysqldb.connect()
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM User WHERE email = %s ', (username))
+        account = cursor.fetchone()
+        if account:
+            check = check_password_hash(account[5], password)
+            if check:
+                session['loggedin'] = True
+                session['id'] = account[0]
+                session['username'] = account[4]
+                msg = 'Logged in successfully !'
+                return render_template('main.html')
+            else:
+                msg = 'Incorrect username / password !'
+
+        else:
+            msg = 'Account dose not exist From this email address '
+
+    return render_template('login.html', msg=msg)
+
+
 #
 # @app.route('/chanel', methods=['GET', 'POST'])
 # def cha():
@@ -163,5 +209,5 @@ def home():
 
 
 if __name__ == '__main__':
-    app.add_url_rule('/login', view_func=application.login_new)
+
     app.run(host="localhost", port=int("5000"))
