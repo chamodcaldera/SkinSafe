@@ -12,7 +12,7 @@ import tensorflow as tf
 import os
 import shutil
 from PIL import Image
-
+from werkzeug.utils import secure_filename
 
 # Store this code in 'app.py' file
 from datetime import datetime
