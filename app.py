@@ -191,7 +191,9 @@ def chan():
 
 @app.route('/docDash',methods=['Get','POST'])
 def docD():
-    return render_template("doctors.html")
+    # return render_template("doctors.html")
+    return redirect(url_for('doctor_search'))
+
 
 @app.route('/prescriptionPage',methods=['Get','POST'])
 def presPg():
