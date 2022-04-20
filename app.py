@@ -495,6 +495,9 @@ def displayPress():
         return render_template("profile.html", tab=3, account=account,imagelist=imagelist)
     return redirect(url_for('login'))
 
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # add prescription
 
