@@ -1,3 +1,4 @@
+import base64
 import secrets
 
 import keras
@@ -40,8 +41,8 @@ app = Flask(__name__)
 app.secret_key = 'super secret key'
 # app.config['SESSION_TYPE'] = 'filesystem'
 # sess.init_app(app)
-UPLOAD_FOLDER_PRESS = '/Users/pramudiranaweera/Desktop/SkinSafeWebDB/Images'
-# ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+UPLOAD_FOLDER_PRESS = r'H:\University of westminister\Level 5\SDGP\flaskProject\presImg'
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER_PRESS
 
 
@@ -136,15 +137,13 @@ csv_path = r'class_dict.csv'  # path to class_dict.csv
 model_path = r'EfficientNetB3-skin disease-85.45.h5'
 
 UPLOAD_FOLDER = r'H:\University of westminister\Level 5\SDGP\flaskProject\images'
-ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+
 
 # app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
-# def allowed_file(filename):
-#     return '.' in filename and \
-#            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 @app.route('/predict', methods=['GET', 'POST'])
 def upload_predict():
@@ -252,7 +251,7 @@ def logout():
     session.pop('loggedin', None)
     session.pop('id', None)
     session.pop('username', None)
-    return redirect(url_for('login'))
+    return render_template("home.html")
 
 # @app.route('/loginAdmin', methods=['GET', 'POST'])
 # def login_admin():
@@ -425,24 +424,7 @@ def add_channel():
         return render_template("channelling.html",)
     return redirect(url_for('login'))
 
-# add prescription
 
-@app.route('/addPress', methods=['POST'])
-def addPress():
-    if 'loggedin' in session:
-        msg = ''
-        if request.method == 'POST' and 'id' in request.form and 'file' in request.form:
-            id = request.form['id']
-            file = request.files['image']
-            _binaryFile = insertBLOB(file)
-            sql = "INSERT INTO Prescription(id,prescription) VALUES(%s,%s)"
-            data = (id, _binaryFile,)
-            conn = mysqldb.connect()
-            cursor = conn.cursor()
-            cursor.execute(sql, data)
-            conn.commit()
-        return render_template("prescription.html",msg=msg)
-    return redirect(url_for('login'))
 
 
 #display selected doctor
@@ -498,7 +480,7 @@ def displayPress():
         imageList = os.listdir('./static/Prescriptions')
         imagelist = ['./static/Prescriptions/' + image for image in imageList if ("userId{0}".format(str(1))) in image]
 
-        return render_template("profile.html", tab=3, account=account,imagelist=imagelist)
+        return render_template("prescription.html", imagelist=imagelist)
     return redirect(url_for('login'))
 
 def allowed_file(filename):
