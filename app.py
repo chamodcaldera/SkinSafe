@@ -188,6 +188,12 @@ def home():
 def chan():
     return render_template("channelling.html")
 
+@app.route('/docDash',methods=['Get','POST'])
+def docD():
+    return render_template("doctors.html")
+
+
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login_new():
