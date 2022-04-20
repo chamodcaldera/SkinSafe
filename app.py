@@ -532,7 +532,8 @@ def addPress():
                 cursor = conn.cursor()
                 cursor.execute(sql, data)
                 conn.commit()
-        return render_template("prescription.html",msg=msg)
+        # return render_template("prescription.html",msg=msg)
+        return redirect(url_for('displayPress'))
     return redirect(url_for('login'))
 
 def containsNumber(value):
