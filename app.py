@@ -40,7 +40,9 @@ app = Flask(__name__)
 app.secret_key = 'super secret key'
 # app.config['SESSION_TYPE'] = 'filesystem'
 # sess.init_app(app)
-
+UPLOAD_FOLDER_PRESS = '/Users/pramudiranaweera/Desktop/SkinSafeWebDB/Images'
+# ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER_PRESS
 
 
 # check if the directory was created and image stored
@@ -493,6 +495,42 @@ def displayPress():
         return render_template("profile.html", tab=3, account=account,imagelist=imagelist)
     return redirect(url_for('login'))
 
+
+# add prescription
+
+@app.route('/addPress', methods=['GET','POST'])
+def addPress():
+    if 'loggedin' in session:
+        msg = ''
+
+        if request.method == 'POST':
+            if 'image' not in request.files:
+                msg='No file input'
+                return render_template("prescription.html", msg=msg)
+            file = request.files['image']
+            # if user does not select file, browser also
+            # submit an empty part without filename
+            if file.filename == '':
+                flash('No selected file')
+                return redirect(request.url)
+            if file and allowed_file(file.filename):
+                file.filename="img"+str(session['id'])+".jpeg"
+                # filename = secure_filename(file.filename)
+                file_location=os.path.join(UPLOAD_FOLDER_PRESS, file.filename)
+                file.save(file_location)
+
+                newFile = open(file_location, 'rb').read()
+                # We must encode the file to get base64 string
+                uploadFile = base64.b64encode(newFile)
+                # _binaryFile = insertBLOB(file)
+                sql = "INSERT INTO Prescription(id,prescription) VALUES(%s ,%s)"
+                data = ((session['id']), uploadFile,)
+                conn = mysqldb.connect()
+                cursor = conn.cursor()
+                cursor.execute(sql, data)
+                conn.commit()
+        return render_template("prescription.html",msg=msg)
+    return redirect(url_for('login'))
 
 def containsNumber(value):
     for character in value:
