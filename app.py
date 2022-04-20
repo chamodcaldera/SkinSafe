@@ -437,6 +437,33 @@ def addPress():
     return redirect(url_for('login'))
 
 
+#display selected doctor
+
+@app.route('/doctorSearch')
+def doctor_search():
+
+    try:
+        if 'loggedin' in session:
+            conn = mysqldb.connect()
+            cursor = conn.cursor()
+            msg=''
+            account=[]
+            if request.method == 'GET'and 'email' in request.form:
+                email = request.form['email']
+                cursor.execute(
+                    'SELECT docId ,docFirstName ,docLastName ,docAge ,docEmail , docGender ,docAddress , docMobileNo  FROM Doctor WHERE docEmail=%s',email)
+                account = cursor.fetchone()
+                if account is None:
+                    msg='There is No Doctor Registered From This Email. ('+email+')'
+
+            return render_template("admin.html", account=account,msg=msg)
+        return redirect(url_for('login'))
+    except Exception as e:
+        print(e)
+    finally:
+        cursor.close()
+        conn.close()
+
 
 
 def containsNumber(value):
