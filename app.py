@@ -446,7 +446,7 @@ def doctor_search():
                 if account is None:
                     msg='There is No Doctor Registered From This Email. ('+email+')'
 
-            return render_template("admin.html", account=account,msg=msg)
+            return render_template("doctors.html", account=account,msg=msg)
         return redirect(url_for('login'))
     except Exception as e:
         print(e)
