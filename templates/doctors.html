@@ -69,7 +69,66 @@
                 <input type="search " placeholder="Search Doctor " />
             </div>
             <div class="cd2 ">
-                <span id="cd-2 ">search result appear here.</span>
+                <span id="cd-2 ">
+                    {% if account != None %}
+                        <table>
+
+
+                            <tr>
+                                <td>
+                                    <h3>Full Name</h3>
+                                </td>
+                                <td>
+                                    <p>{{ account[1] + " " +account[2]}}</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h3>Doctor ID</h3>
+                                </td>
+                                <td>
+                                    <p>{{ account[0]}}</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h3>Age</h3>
+                                </td>
+                                <td>
+                                    <p>{{ account[3]}}</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h3 >Email</h3>
+                                </td>
+                                <td>
+                                    <p>{{ account[4]}}</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h3>Address</h3>
+                                </td>
+                                <td>
+                                    <p>{{ account[5]}}</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h3>Mobile Number </h3>
+                                </td>
+                                <td>
+                                    <p> {{ account[6] }}</p>
+
+                                </td>
+                            </tr>
+
+                        </table>
+                    {% else %}
+                        <p>{{ msg }}</p>
+                    {% endif %}
+                </span>
             </div>
         </main>
 
