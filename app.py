@@ -207,7 +207,7 @@ def login_new():
                     session['id'] = account[0]
                     session['username'] = account[3]
                     msg = 'Logged in successfully !'
-                    return render_template('home.html')
+                    return render_template('admindashboard.html')
                 else:
                     msg = 'Incorrect username / password !'
 
