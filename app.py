@@ -417,6 +417,28 @@ def add_channel():
         return render_template("channelling.html",)
     return redirect(url_for('login'))
 
+# add prescription
+
+@app.route('/addPress', methods=['POST'])
+def addPress():
+    if 'loggedin' in session:
+        msg = ''
+        if request.method == 'POST' and 'id' in request.form and 'file' in request.form:
+            id = request.form['id']
+            file = request.files['image']
+            _binaryFile = insertBLOB(file)
+            sql = "INSERT INTO Prescription(id,prescription) VALUES(%s,%s)"
+            data = (id, _binaryFile,)
+            conn = mysqldb.connect()
+            cursor = conn.cursor()
+            cursor.execute(sql, data)
+            conn.commit()
+        return render_template("prescription.html",msg=msg)
+    return redirect(url_for('login'))
+
+
+
+
 def containsNumber(value):
     for character in value:
         if character.isdigit():
