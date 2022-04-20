@@ -528,10 +528,15 @@ def addPress():
                 file_location=os.path.join(UPLOAD_FOLDER_PRESS, file.filename)
                 file.save(file_location)
 
-                newFile = open(file_location, 'rb').read()
+                # newFile = open(file_location, 'rb').read()
                 # We must encode the file to get base64 string
-                uploadFile = base64.b64encode(newFile)
-                # _binaryFile = insertBLOB(file)
+                with open(file_location,'rb') as binary_file:
+                    binary_file_data = binary_file.read()
+                    base64_encoded_data = base64.b64encode(binary_file_data)
+                    uploadFile = base64_encoded_data.decode('utf-8')
+
+                    # uploadFile = base64.b64encode(newFile)
+                    # _binaryFile = insertBLOB(file)
                 sql = "INSERT INTO Prescription(id,prescription) VALUES(%s ,%s)"
                 data = ((session['id']), uploadFile,)
                 conn = mysqldb.connect()
