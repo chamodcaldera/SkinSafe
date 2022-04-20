@@ -461,28 +461,35 @@ def displayPress():
     if 'loggedin' in session:
         conn = mysqldb.connect()
         cursor = conn.cursor()
-        cursor.execute('SELECT * FROM Prescription WHERE id = % s', (session['id'],))
-        record = cursor.fetchone()
+
         cursor.execute('SELECT * FROM User WHERE id = % s', (session['id'],))
         account = cursor.fetchone()
-
+        cursor.execute('SELECT * FROM Prescription WHERE id = % s', (session['id'],))
+        record = cursor.fetchone()
         while record is not None:
 
-            storeFilePath = "./static/Prescriptions/userId{0}.img".format(str(session['id'])) + str(record[0]) + ".jpg"
-            # print(record)
-            with open(storeFilePath, "wb") as File:
-                File.write(record[2])
-                File.close()
+            storeFilePath = "./static/Prescriptions/userId{0}.img".format(str(session['id'])) + str(record[0]) + ".jpeg"
+            print(record)
+            base64_img_bytes=record[2]
+            # base64_img_bytes = base64_img.encode('utf-8')
+            # with open(storeFilePath, "wb") as File:
+            #     File.write(record[2])
+            #     File.close()
+            with open(storeFilePath, 'wb') as file_to_save:
+                decoded_image_data = base64.decodebytes(base64_img_bytes)
+                file_to_save.write(decoded_image_data)
             record = cursor.fetchone()
 
         #display images
 
         imageList = os.listdir('./static/Prescriptions')
-        imagelist = ['./static/Prescriptions/' + image for image in imageList if ("userId{0}".format(str(1))) in image]
+        imagelist = ['./Prescriptions/' + image for image in imageList if ("userId{0}".format(str(session['id']))) in image]
 
-        return render_template("prescription.html", imagelist=imagelist)
+        return render_template("prescription.html",imagelist=imagelist)
+
     return redirect(url_for('login'))
 
+#check file extention
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
