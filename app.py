@@ -188,6 +188,17 @@ def home():
 def chan():
     return render_template("channelling.html")
 
+@app.route('/docDash',methods=['Get','POST'])
+def docD():
+    return render_template("doctors.html")
+
+@app.route('/prescriptionPage',methods=['Get','POST'])
+def presPg():
+    return render_template("prescription.html")
+
+
+
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login_new():
@@ -207,7 +218,7 @@ def login_new():
                     session['id'] = account[0]
                     session['username'] = account[3]
                     msg = 'Logged in successfully !'
-                    return render_template('home.html')
+                    return render_template('admindashboard.html')
                 else:
                     msg = 'Incorrect username / password !'
 
@@ -405,6 +416,28 @@ def add_channel():
 
         return render_template("channelling.html",)
     return redirect(url_for('login'))
+
+# add prescription
+
+@app.route('/addPress', methods=['POST'])
+def addPress():
+    if 'loggedin' in session:
+        msg = ''
+        if request.method == 'POST' and 'id' in request.form and 'file' in request.form:
+            id = request.form['id']
+            file = request.files['image']
+            _binaryFile = insertBLOB(file)
+            sql = "INSERT INTO Prescription(id,prescription) VALUES(%s,%s)"
+            data = (id, _binaryFile,)
+            conn = mysqldb.connect()
+            cursor = conn.cursor()
+            cursor.execute(sql, data)
+            conn.commit()
+        return render_template("prescription.html",msg=msg)
+    return redirect(url_for('login'))
+
+
+
 
 def containsNumber(value):
     for character in value:

@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <title>Admin</title>
         <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
-        <link rel="stylesheet" href='/Users/uvinduabeysinghe/Downloads/Medilab 3/Medilab/assets/css/admin.css'>
+        <link rel="stylesheet" href='../static/admin.css'>
     </head>
     <body>
         <div class="sidebar">
@@ -18,11 +18,11 @@
                         <span>Dashboard</span></a>
                     </li>
                     <li>
-                        <a href=""><span class="las la-user-nurse"></span>
+                        <a href="{{ url_for('docD')}}"><span class="las la-user-nurse"></span>
                         <span>Doctors</span></a>
                     </li>
                     <li>
-                        <a href=""><span class="las la-procedures"></span>
+                        <a href="patients.html"><span class="las la-procedures"></span>
                         <span>Patients</span></a>
                     </li>
                     
@@ -30,10 +30,7 @@
                         <a href=""><span class="las la-clipboard-list"></span>
                         <span>Clinic Reports</span></a>
                     </li>
-                    <li>
-                        <a href=""><span class="las la-pills"></span>
-                        <span>Prescriptions</span></a>
-                    </li>
+
                     
                     <li>
                         <a href=""><span class="las la-sign-out-alt"></span>
