@@ -464,6 +464,34 @@ def doctor_search():
         cursor.close()
         conn.close()
 
+# prescription display
+@app.route("/displayPress")
+def displayPress():
+
+    if 'loggedin' in session:
+        conn = mysqldb.connect()
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM Prescription WHERE id = % s', (session['id'],))
+        record = cursor.fetchone()
+        cursor.execute('SELECT * FROM User WHERE id = % s', (session['id'],))
+        account = cursor.fetchone()
+
+        while record is not None:
+
+            storeFilePath = "./static/Prescriptions/userId{0}.img".format(str(session['id'])) + str(record[0]) + ".jpg"
+            # print(record)
+            with open(storeFilePath, "wb") as File:
+                File.write(record[2])
+                File.close()
+            record = cursor.fetchone()
+
+        #display images
+
+        imageList = os.listdir('./static/Prescriptions')
+        imagelist = ['./static/Prescriptions/' + image for image in imageList if ("userId{0}".format(str(1))) in image]
+
+        return render_template("profile.html", tab=3, account=account,imagelist=imagelist)
+    return redirect(url_for('login'))
 
 
 def containsNumber(value):
