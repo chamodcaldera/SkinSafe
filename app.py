@@ -191,8 +191,8 @@ def chan():
 
 @app.route('/docDash',methods=['Get','POST'])
 def docD():
-    # return render_template("doctors.html")
-    return redirect(url_for('doctor_search'))
+    return render_template("doctors.html")
+    # return redirect(url_for('doctor_search'))
 
 
 @app.route('/prescriptionPage',methods=['Get','POST'])
@@ -285,6 +285,11 @@ def logout():
 def regDoc():
     return render_template('doctor-register.html')
 
+@app.route('/pat', methods=['GET', 'POST'])
+def pat():
+    return render_template('patients.html')
+
+
 # register user
 @app.route('/registerUser', methods=['GET', 'POST'])
 def register():
@@ -353,7 +358,7 @@ def registerDoctor():
 
         conn = mysqldb.connect()
         cursor = conn.cursor()
-        cursor.execute('SELECT * FROM Doctor WHERE email = %s', (email,))
+        cursor.execute('SELECT * FROM Doctor WHERE docEmail = %s', (email,))
         account = cursor.fetchone()
         if account:
             msg = 'Account already exists !'
@@ -437,7 +442,7 @@ def add_channel():
 def doctor_search():
 
     try:
-        if 'loggedin' in session:
+        # if 'loggedin' in session:
             conn = mysqldb.connect()
             cursor = conn.cursor()
             msg=''
@@ -451,7 +456,7 @@ def doctor_search():
                     msg='There is No Doctor Registered From This Email. ('+email+')'
 
             return render_template("doctors.html", account=account,msg=msg)
-        return redirect(url_for('login'))
+        # return redirect(url_for('login'))
     except Exception as e:
         print(e)
     finally:

@@ -21,11 +21,11 @@
                         <span>Dashboard</span></a>
                 </li>
                 <li>
-                    <a href="doctors.html"><span class="las la-user-nurse"></span>
+                    <a href="{{ url_for('docD')}}"><span class="las la-user-nurse"></span>
                         <span>Doctors</span></a>
                 </li>
                 <li>
-                    <a href="Patients..html" class="active"><span class="las la-procedures"></span>
+                    <a href="{{ url_for('pat')}}" class="active"><span class="las la-procedures"></span>
                         <span>Patients</span></a>
                 </li>
 
@@ -64,7 +64,9 @@
                 <input type="search" placeholder="Search Patient" />
             </div>
 
-            <button action="" id="removepatient"> Remove Patient</button>
+            <a href="{{ url_for('regDoc')}}">
+            <button   id="removepatient"> Remove Patient</button>
+                </a>
 
 
             <div class="cd1">

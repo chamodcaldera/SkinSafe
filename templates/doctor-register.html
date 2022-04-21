@@ -45,8 +45,8 @@
                     </div>
                 </div>
                 <div class="feedback-details">
-                    <input type="radio" name="rate" id="dot1">
-                    <input type="radio" name="rate" id="dot2">
+                    <input type="radio" value="Male" name="gender" id="dot1">
+                    <input type="radio" value="Female" name="gender" id="dot2">
                     <span class="feedback-title">Gender</span>
                     <div class="category">
                         <label for="dot1" id="cd">
@@ -63,7 +63,7 @@
                     <button type="submit" onclick="required()">Submit</button>
                 </div>
             </form>
-            <p class="log">Already have an account? <a href="{{ url_for('login')}}">Login here</a></p>
+            <p class="log">Already have an account? <a href="{{ url_for('login_new')}}">Login here</a></p>
         </div>
     </div>
 
