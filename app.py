@@ -433,12 +433,16 @@ def add_channel():
         return render_template("channelling.html",)
     return redirect(url_for('login'))
 
+# dashboard.html load
 
+@app.route('/dashboard', methods=['GET', 'POST'])
+def dashboard():
+    return render_template('admindashboard.html')
 
 
 #display selected doctor
 
-@app.route('/doctorSearch')
+@app.route('/doctorSearch', methods=['GET','POST'])
 def doctor_search():
 
     try:
@@ -447,7 +451,7 @@ def doctor_search():
             cursor = conn.cursor()
             msg=''
             account=[]
-            if request.method == 'GET'and 'email' in request.form:
+            if request.method == 'POST'and 'email' in request.form:
                 email = request.form['email']
                 cursor.execute(
                     'SELECT docId ,docFirstName ,docLastName ,docAge ,docEmail , docGender ,docAddress , docMobileNo  FROM Doctor WHERE docEmail=%s',email)
