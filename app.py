@@ -464,6 +464,35 @@ def doctor_search():
         cursor.close()
         conn.close()
 
+    # display selected doctor
+
+@app.route('/doctorRemove', methods=['GET', 'POST'])
+def doctor_remove():
+
+    try:
+        if 'loggedin' in session:
+            conn = mysqldb.connect()
+            cursor = conn.cursor()
+            msg = ''
+            account = []
+            if request.method == 'POST' and 'email' in request.form:
+                email = request.form['email']
+                cursor.execute('DELETE FROM Doctor WHERE docEmail=%s',email)
+                cursor.execute(
+                    'SELECT docId ,docFirstName ,docLastName ,docAge ,docEmail , docGender ,docAddress , docMobileNo  FROM Doctor WHERE docEmail=%s',
+                    email)
+                account = cursor.fetchone()
+                if account is None:
+                    account = []
+                    msg = 'The doctor registered from this email '+'(' + email + ')'+'removed successfully!'
+
+            return render_template("doctors.html", account=account, msg=msg)
+        return redirect(url_for('login'))
+    except Exception as e:
+        print(e)
+    finally:
+        cursor.close()
+        conn.close()
 # prescription display
 @app.route("/displayPress")
 def displayPress():
@@ -669,6 +698,7 @@ def channelling():
         record = cursor.fetchall()
         return render_template("profile.html",tab=3, account=account,record=record,msg=msg)
     return redirect(url_for('login'))
+
 
 
 def containsNumber(value):
