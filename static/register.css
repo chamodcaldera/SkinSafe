@@ -12,7 +12,7 @@ body {
     justify-content: center;
     align-items: center;
     padding: 10px;
-    background: linear-gradient(135deg, #71b7e6, #9b59b6);
+    background: linear-gradient(to bottom left, #3333ff 0%, #66ccff 61%);
 }
 
 .container {
@@ -105,11 +105,11 @@ form .category label {
     font-weight: 500;
     border-radius: 5px;
     letter-spacing: 1px;
-    background: linear-gradient(135deg, #71b7e6, #9b59b6);
+    background: linear-gradient(to bottom left, #3333ff 0%, #66ccff 61%);
 }
 
 form .btn1 button:hover {
-    background: linear-gradient(-135deg, #71b7e6, #9b59b6);
+    background: linear-gradient(to top right, #0066ff 0%, #66ccff 61%);
 }
 
 @media(max-width: 584px) {
