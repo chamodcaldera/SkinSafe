@@ -1,0 +1,53 @@
+
+.popupWindow{
+    width: 350px;
+    background: white;
+    border-radius: 6px;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%,-50%) scale(0.1);
+    text-align: center;
+    padding: 0 30px 20px;
+    color: #333;
+    visibility: hidden;
+    transition: transform 0.4s, top 0.4s;
+    align-items:center ;
+    justify-content: center;
+
+}
+
+.open-popupWindow{
+    visibility: visible;
+    top: 50%;
+    transform: translate(-50%,-50%) scale(1);
+}
+
+.popupWindow img{
+    width: 100px;
+    margin-top: -15%;
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0,0,0 ,0.2);
+}
+.tWinData{
+    width:190px
+}
+.popupWindow h2{
+   font-size: 30px;
+   font-weight: 500;
+    margin: 10px 0 10px;
+}
+.btnWindow{
+    width: 90%;
+    margin-top: 5px;
+    padding: 5px 0;
+    background: #2575d2;
+    color:#fff;
+    border: 0;
+    outline: none;
+    font-size: 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 5px 5px rgba(0,0,0 ,0.2);
+
+}

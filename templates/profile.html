@@ -5,6 +5,8 @@
 	<title> User Setting Sample</title>
 	<link rel="stylesheet" href="../static/profileStyle.css">
 	<link rel="stylesheet" href="../static/fontawesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/stylePopupWindow.css">
+
 </head>
 <style>
 body, html {
@@ -51,7 +53,7 @@ body, html {
 				<a onclick="tabs(3)" class="tab">
                     <i class="fa fa-medkit"></i>
                 </a>
-                <a onclick="tabs(4)" class="tab">
+                <a onclick="openPopup()" class="tab">
                     <i class="fa fa-sign-out"></i>
                 </a>
 
@@ -258,6 +260,37 @@ body, html {
 			</div>
 		</div>
 	</div>
+
+    <div class="popupWindow" id="popupMsgWindow">
+        <img src="/static/logout.png">
+        <h2>Log Out</h2>
+        <br>
+        <h4>Are you sure you want to logout?</h4>
+        <br>
+        <br>
+        <table>
+            <tr>
+                <td class="tdata">
+                    <button class="btnWindow" type="button" onclick="closePopup()">Cancel</button>
+                </td>
+                <td class="tdata">
+                    <a href="{{ url_for('logout') }}" ><button class="btnWindow" type="button">Logout</button></a>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <script>
+        var popup=document.getElementById("popupMsgWindow");
+
+        function openPopup() {
+            popup.classList.add("open-popupWindow")
+        }
+        function closePopup() {
+            popup.classList.remove("open-popupWindow")
+        }
+    </script>
+
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 	<script>
         const tabBtn =document.querySelectorAll(".tab");
