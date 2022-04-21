@@ -442,7 +442,7 @@ def add_channel():
 def doctor_search():
 
     try:
-        # if 'loggedin' in session:
+        if 'loggedin' in session:
             conn = mysqldb.connect()
             cursor = conn.cursor()
             msg=''
@@ -453,10 +453,11 @@ def doctor_search():
                     'SELECT docId ,docFirstName ,docLastName ,docAge ,docEmail , docGender ,docAddress , docMobileNo  FROM Doctor WHERE docEmail=%s',email)
                 account = cursor.fetchone()
                 if account is None:
+                    account = []
                     msg='There is No Doctor Registered From This Email. ('+email+')'
 
             return render_template("doctors.html", account=account,msg=msg)
-        # return redirect(url_for('login'))
+        return redirect(url_for('login'))
     except Exception as e:
         print(e)
     finally:
@@ -544,6 +545,13 @@ def addPress():
         # return render_template("prescription.html",msg=msg)
         return redirect(url_for('displayPress'))
     return redirect(url_for('login'))
+
+
+@app.route('/main', methods=['GET','POST'])
+def main():
+    return render_template('main.html')
+
+
 
 
 # profile display
