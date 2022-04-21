@@ -550,6 +550,107 @@ def displayProfile():
         return render_template("profile.html", tab=0, account=account)
     return redirect(url_for('login'))
 
+# update profile
+@app.route("/updateUser", methods=['GET', 'POST'])
+def updateUser():
+    msg = ''
+    if 'loggedin' in session:
+        conn = mysqldb.connect()
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM User WHERE id = % s', (session['id'],))
+        account = cursor.fetchone()
+        if request.method == 'POST' and 'firstname' in request.form or 'lastname' in request.form or 'age' in request.form or 'address' in request.form or 'mobNo' in request.form:
+            firstname = request.form['firstname']
+            lastname = request.form['lastname']
+            age = request.form['age']
+            address = request.form['address']
+            mobileNo = request.form['mobNo']
+            if containsNumber(firstname) or containsNumber(lastname):
+                msg = 'First name and Last name must contain only characters!'
+            elif validate(age) or len(age)>3:
+                msg="Inser Age Correctly"
+            elif validate(mobileNo) or (len(mobileNo) > 10 or len(mobileNo) < 10):
+                # must see the validation here
+                msg = 'Phone Number must contain only 10 numbers!'
+            else:
+
+                sql='UPDATE User SET  firstName =% s, lastName =% s, age =% s, address =% s, mobileNo =% s WHERE id =%s '
+                data=(firstname,lastname, age, address, mobileNo,(session['id'],),)
+                cursor.execute(sql, data)
+                conn.commit()
+                msg = 'You have successfully updated !'
+                cursor.execute('SELECT * FROM User WHERE id = % s', (session['id'],))
+                account = cursor.fetchone()
+        elif request.method == 'POST':
+            msg = 'Please fill out the form !'
+        return render_template('profile.html', tab=1 ,account=account,msg=msg)
+        # return redirect(url_for('display',msg=msg))
+    return redirect(url_for('login'))
+
+# update password
+@app.route("/updatePassword", methods=['GET', 'POST'])
+def updatePassword():
+    msg = ''
+    if 'loggedin' in session:
+        conn = mysqldb.connect()
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM User WHERE id = % s', (session['id'],))
+        account = cursor.fetchone()
+        if request.method == 'POST' and 'email' in request.form and 'oldPass' in request.form and 'newPass' in request.form and 'finalPass' in request.form:
+            email = request.form['email']
+            oldPass = request.form['oldPass']
+            newPass = request.form['newPass']
+            finalPass = request.form['finalPass']
+            if(session['username']==email):
+                conn = mysqldb.connect()
+                cursor = conn.cursor()
+                cursor.execute('SELECT * FROM User WHERE email = %s ', (session['username']))
+                account = cursor.fetchone()
+                if account:
+                    check = check_password_hash(account[5], oldPass)
+                    if check:
+                        if(newPass==finalPass):
+                            _hashed_password = generate_password_hash(newPass)
+                            sql='UPDATE User SET  password =% s WHERE id =%s '
+                            data=(_hashed_password,(session['id'],),)
+                            cursor.execute(sql, data)
+                            conn.commit()
+                            msg = 'You have successfully updated Password !'
+                        else:
+                            msg='Re-Enter new Password Correctly'
+                    else:
+                        msg='Incorrect Password'
+            else:
+                msg='Enter your email correctly'
+        elif request.method == 'POST':
+            msg = 'Please fill out the form !'
+        return render_template('profile.html',tab=2,account=account,msg=msg)
+    return redirect(url_for('login'))
+
+# display channeling and delete channeling
+@app.route('/Channelling', methods=['POST','GET'])
+def channelling():
+    if 'loggedin' in session:
+
+        msg = ''
+        conn = mysqldb.connect()
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM User WHERE id = % s', (session['id'],))
+        account = cursor.fetchone()
+
+        if request.method == 'POST' and 'channelId' in request.form:
+            channelId = request.form['channelId']
+            conn = mysqldb.connect()
+            cursor = conn.cursor()
+            cursor.execute('DELETE FROM Channelling WHERE channelId=%s',channelId)
+            conn.commit()
+            msg='Channel number '+channelId+' deleted successfully'
+
+        cursor.execute('SELECT c.channelId As id, c.name As name, c.channel_date As date, c.status as status, d.docFirstName as fname, d.docLastName As last,dt.timeStart As start FROM Channelling c JOIN Doctor d ON c.docterId=d.docId JOIN DoctorTimeSlots dt ON d. docId=dt.doctorId WHERE id = % s', (session['id'],))
+        record = cursor.fetchall()
+        return render_template("profile.html",tab=3, account=account,record=record,msg=msg)
+    return redirect(url_for('login'))
+
 
 def containsNumber(value):
     for character in value:
