@@ -9,10 +9,34 @@ body {
     background-color: #00ace6;
 }
 
-.header {
+.topNav{
     background-color: #f4f4f4;
-    box-shadow: 0px 0px 14px 0px rgba(0,0,0,0.75);
-    transition: all 0.5s;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.topRight,.topLeft {
+    display: flex;
+}
+
+.topRight{
+    margin-left: 8%;
+}
+
+.topLeft{
+    margin-right: 9%;
+}
+
+.phone,.email,.location,.twitter,.facebook,.instagram,.linkedin{
+    margin: 7px;
+    color: #145e9f;
+}
+
+.bottomNav {
+    background-color: #f4f4f4;
+    box-shadow: 0px 3px 15px rgba(25, 119, 204, 0.1);
     width: 100%;
     padding: 15px 0;
     display: flex;
@@ -20,21 +44,21 @@ body {
     justify-content: space-evenly;
 }
 
-.navbar li{
+.navOptions li{
     display: inline;
     text-transform: uppercase;
     font-size: 18px;
     margin: 10px;
 }
 
-.navbar a {
+.navOptions a {
     text-decoration: none;
-    color: #1977cc;
+    color: #166bb6;
     border-bottom: 2px solid #f4f4f4;
     transition: 0.3s;
 }
 
-.navbar a:hover, .navbar a:active {
+.navOptions a:hover, .navOptions a:active {
   color: #000;
   border-color: #000;
 }
