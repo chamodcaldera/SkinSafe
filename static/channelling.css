@@ -1,6 +1,7 @@
 * {
 	box-sizing: border-box;
 }
+
 body {
 	font-family: "Open Sans", sans-serif;
 	line-height: 1.6;
@@ -9,44 +10,38 @@ body {
 }
 
 .header {
-  background-color: #f4f4f4;
+    background-color: #f4f4f4;
     box-shadow: 0px 0px 14px 0px rgba(0,0,0,0.75);
-  transition: all 0.5s;
-  width: 100%;
-  padding: 15px 0;
-  display: flex;
+    transition: all 0.5s;
+    width: 100%;
+    padding: 15px 0;
+    display: flex;
     align-items: center;
     justify-content: space-evenly;
-
 }
-
 
 .navbar li{
     display: inline;
     text-transform: uppercase;
     font-size: 18px;
     margin: 10px;
-
-
 }
+
 .navbar a {
     text-decoration: none;
     color: #1977cc;
     border-bottom: 2px solid #f4f4f4;
     transition: 0.3s;
 }
+
 .navbar a:hover, .navbar a:active {
   color: #000;
   border-color: #000;
-
 }
-
-
 
 img{
     width: 12%;
     height: 12%;
-
 }
 
 .appointment-btn{
@@ -58,14 +53,11 @@ img{
     font-size: 15px;
     text-transform: uppercase;
     text-decoration: none;
-
 }
 
 .appointment-btn:hover {
   background: #145e9f;
-
 }
-
 
 .heading{
   text-align: center;
@@ -134,8 +126,8 @@ img{
   padding-left: 22px;
   text-align: center;
   cursor: pointer;
-
 }
+
 .container button[type="submit"]:hover {
 	background: #008080;
 }
