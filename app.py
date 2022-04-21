@@ -281,7 +281,9 @@ def logout():
 #
 #     return render_template('admindashboard.html', msg=msg)
 
-
+@app.route('/regDoc', methods=['GET', 'POST'])
+def regDoc():
+    return render_template('doctor-register.html')
 
 # register user
 @app.route('/registerUser', methods=['GET', 'POST'])
@@ -381,7 +383,7 @@ def registerDoctor():
     elif request.method == 'POST':
 
         msg = 'Please fill out the form !'
-    return render_template('register.html', msg=msg)
+    return render_template('doctor-register.html', msg=msg)
 
 # add appointments
 

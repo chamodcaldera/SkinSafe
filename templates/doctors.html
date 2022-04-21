@@ -54,19 +54,16 @@
                     </label>Doctors
             </h2>
 
-            <div class="search-wrapper ">
-                <span class="las la-search "></span>
-                <input type="search " name="email" action="{{ url_for('doctor_search')}}" placeholder="Search here " />
-            </div>
+
         </header>
 
         <main>
-            <button action="{{ url_for('registerDoctor')}}" id="add-doctor"> Add Doctor</button>
+            <button action="{{ url_for('regDoc')}}" id="add-doctor"> Add Doctor</button>
             <button id="remove-doctor">Remove Doctor </button>
             <button id="edit-details"> Edit Details</button>
             <div class="search-doctor ">
                 <span class="las la-search "></span>
-                <input type="search " placeholder="Search Doctor " />
+                <input type="search " action="{{ url_for('doctor_search')}}" placeholder="Search Doctor " />
             </div>
             <div class="cd2 ">
                 <span id="cd-2 ">
