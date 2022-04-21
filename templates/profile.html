@@ -146,10 +146,10 @@ body, html {
                     <table>
                         <tr>
                             <td class="tdata">
-							    <a href="#" onclick="toggle()"><button class="btn">Cancel</button></a>
+							    <a href="{{ url_for('main') }}" onclick="toggle()"><button class="btn">Cancel</button></a>
                             </td>
                             <td class="tdata">
-                                <button type="submit" class="btn">Update</button>
+                                <button  type="submit" class="btn">Update</button>
                             </td>
                         </tr>
                     </table>
@@ -178,7 +178,7 @@ body, html {
                     <table>
                         <tr>
                             <td class="tdata">
-							    <a href="#" onclick="toggle()" ><button class="btn">Cancel</button></a>
+							    <a href="{{ url_for('main') }}" onclick="toggle()" ><button class="btn">Cancel</button></a>
                             </td>
                             <td class="tdata">
                                 <button  type="submit" class="btn">Update</button>
@@ -245,7 +245,7 @@ body, html {
                     <table>
                     <tr>
                         <td class="tdata">
-							<a href="index.html" onclick="toggle()"><button class="btn">Cancel</button></a>
+							<a href="{{ url_for('main') }}" onclick="toggle()"><button class="btn">Cancel</button></a>
                         </td>
                         <td class="tdata">
                             <button class="btn" type="submit">REFRESH</button>
@@ -270,10 +270,10 @@ body, html {
         <br>
         <table>
             <tr>
-                <td class="tdata">
+                <td class="tWinData">
                     <button class="btnWindow" type="button" onclick="closePopup()">Cancel</button>
                 </td>
-                <td class="tdata">
+                <td class="tWinData">
                     <a href="{{ url_for('logout') }}" ><button class="btnWindow" type="button">Logout</button></a>
                 </td>
             </tr>

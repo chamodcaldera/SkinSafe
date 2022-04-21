@@ -552,6 +552,10 @@ def main():
     return render_template('main.html')
 
 
+@app.route('/adminDashboard', methods=['GET','POST'])
+def adminDashboard():
+    return render_template('admindashboard.html')
+
 
 
 # profile display
@@ -657,11 +661,11 @@ def channelling():
             channelId = request.form['channelId']
             conn = mysqldb.connect()
             cursor = conn.cursor()
-            cursor.execute('DELETE FROM Channelling WHERE channelId=%s',channelId)
+            cursor.execute('DELETE FROM Chanelling WHERE channelId=%s',channelId)
             conn.commit()
             msg='Channel number '+channelId+' deleted successfully'
 
-        cursor.execute('SELECT c.channelId As id, c.name As name, c.channel_date As date, c.status as status, d.docFirstName as fname, d.docLastName As last,dt.timeStart As start FROM Channelling c JOIN Doctor d ON c.docterId=d.docId JOIN DoctorTimeSlots dt ON d. docId=dt.doctorId WHERE id = % s', (session['id'],))
+        cursor.execute('SELECT c.channelId As id, c.channel_date As date, c.status as status, d.docFirstName as fname, d.docLastName As last,dt.timeStart As start FROM Chanelling c JOIN Doctor d ON c.docterId=d.docId JOIN DoctorTimeSlots dt ON d. docId=dt.doctorId WHERE id = % s', (session['id'],))
         record = cursor.fetchall()
         return render_template("profile.html",tab=3, account=account,record=record,msg=msg)
     return redirect(url_for('login'))
