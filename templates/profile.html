@@ -3,21 +3,40 @@
 <head>
 	<meta charset="UTF-8">
 	<title> User Setting Sample</title>
-	<link rel="stylesheet" href="../static/styleProfile.css">
+	<link rel="stylesheet" href="../static/profileStyle.css">
 	<link rel="stylesheet" href="../static/fontawesome/css/font-awesome.min.css">
 </head>
+<style>
+body, html {
+  height: 100%;
+  margin: 0;
+}
+
+.bg {
+  /* The image used */
+  background-image: url("../static/background.jpeg");
+
+  /* Full height */
+  height: 100%;
+
+  /* Center and scale the image nicely */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+</style>
 <body>
 
-	<div class="container" id="blur">
+	<div class="container bg" id="blur">
 		<div class="content">
-			<h2>some text</h2>
-			<a href="#" onclick="toggle()">Read More</a>
+            <a href="#" onclick="toggle()"></a>
+
 		</div>
 	</div>
-	<div class="containerProfile" id="popup">
+	<div class="containerProfile login-popup" id="popup">
 		<div class="leftbox">
 
-			<nav class="navProf" style="padding-top: 20px">
+			<nav class="navProf" style="padding-top: 25px">
 				<a onclick="tabs(0)" class="tab" >
 					<i class="fa fa-user"></i>
 				</a>
@@ -31,6 +50,9 @@
 
 				<a onclick="tabs(3)" class="tab">
                     <i class="fa fa-medkit"></i>
+                </a>
+                <a onclick="tabs(4)" class="tab">
+                    <i class="fa fa-sign-out"></i>
                 </a>
 
             </nav>
@@ -73,7 +95,7 @@
 
 				<h2 class="h2">Mobile no</h2>
 				<p>{{ account[8] }}</p>
-				<a href="#" onclick="toggle()"><button class="btn">Cancel</button></a>
+				<a href="{{ url_for('homePage') }}" onclick="toggle()"><button class="btn">Cancel</button></a>
 
 
 			</div>
@@ -289,7 +311,16 @@
             msg.parentNode.removeChild(msg);
         },3000)
 
+        setTimeout(function(){
+            var div=document.getElementById("popup");
+            div.style.visibility="visible";
+            toggle()
+        },1000)
+
+
+
     </script>
+
 
     </body>
 </html>
