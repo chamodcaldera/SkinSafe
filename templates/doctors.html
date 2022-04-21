@@ -21,7 +21,7 @@
                         <span>Dashboard</span></a>
                 </li>
                 <li>
-                    <a href="doctors.html" class="active"><span class="las la-user-nurse"></span>
+                    <a href="{{ url_for('docD')}}" class="active"><span class="las la-user-nurse"></span>
                         <span>Doctors</span></a>
                 </li>
                 <li>
@@ -39,7 +39,7 @@
                 </li>
 
                 <li>
-                    <a href=" "><span class="las la-sign-out-alt "></span>
+                    <a href="{{ url_for('logout')}} "><span class="las la-sign-out-alt "></span>
                         <span>Logout</span></a>
                 </li>
             </ul>
@@ -61,7 +61,7 @@
         </header>
 
         <main>
-            <button id="add-doctor"> Add Doctor</button>
+            <button action="{{ url_for('registerDoctor')}}" id="add-doctor"> Add Doctor</button>
             <button id="remove-doctor">Remove Doctor </button>
             <button id="edit-details"> Edit Details</button>
             <div class="search-doctor ">
