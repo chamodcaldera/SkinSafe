@@ -435,10 +435,6 @@ def add_channel():
 
 # dashboard.html load
 
-@app.route('/dashboard', methods=['GET', 'POST'])
-def dashboard():
-    return render_template('admindashboard.html')
-
 
 #display selected doctor
 

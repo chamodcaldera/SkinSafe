@@ -21,7 +21,7 @@
                         <span>Dashboard</span></a>
                 </li>
                 <li>
-                    <a href="{{ url_for('docD')}}" class="active"><span class="las la-user-nurse"></span>
+                    <a href="{{ url_for('doctor_search')}}" class="active"><span class="las la-user-nurse"></span>
                         <span>Doctors</span></a>
                 </li>
                 <li>
@@ -60,22 +60,28 @@
 
         <main>
 
-         <a href="{{ url_for('doctor_search')}}">
-            <button   id="removepatient"> Search Doctor</button>
+            <form method="post" >
+                <div class="search-doctor ">
+                    <span class="las la-search "></span>
+                    <input type="text " name="email" placeholder="Enter Doctor Email " />
+                </div>
+                <br>
+                <a href="{{ url_for('doctor_search')}}">
+                    <button   id="removepatient"> Search Doctor</button>
                 </a>
 
-         <a href="{{ url_for('regDoc')}}">
-            <button   id="removepatient"> Add Doctor</button>
+                <a href="{{ url_for('regDoc')}}">
+                    <button   id="removepatient"> Add Doctor</button>
                 </a>
 
+                <a href="{{ url_for('#')}}">
+                    <button id="remove-doctor">Remove Doctor </button>
+                </a>
+                <a href="{{ url_for('#')}}">
+                    <button id="edit-details"> Edit Details</button>
+                </a>
 
-            <button id="remove-doctor">Remove Doctor </button>
-            <button id="edit-details"> Edit Details</button>
-
-            <div class="search-doctor ">
-                <span class="las la-search "></span>
-                <input type="search " action="{{ url_for('doctor_search')}}" placeholder="Enter Doctor Email " />
-            </div>
+            </form>
 
             <div class="cd2 ">
                 <span id="cd-2 ">
