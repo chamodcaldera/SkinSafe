@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <title> Patient Registration Form </title>
+    <link rel="stylesheet" href="../static/register.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+    <div class="container">
+        <div class="title">Patient Registration</div>
+        <div class="msg">{{ msg }}</div>
+        <div class="content">
+            <form action="{{ url_for('register')}}" method="post" autocomplete="off">
+                <div class="user-details">
+                    <div class="input-box">
+                        <span class="details">First Name</span>
+                        <input type="text" name="firstname" id="firstname" placeholder="Enter your First Name">
+                    </div>
+                    <div class="input-box">
+                        <span class="details">Last Name </span>
+                        <input type="text" name="lastname" id="lastname" placeholder="Enter your Last Name">
+                    </div>
+                    <div class="input-box">
+                        <span class="details">Age</span>
+                        <input type="text" name="age" id="age" placeholder="Enter your Age">
+                    </div>
+                    <div class="input-box">
+                        <span class="details">Address</span>
+                        <input type="text" id="address" name="address" placeholder="Enter your Address">
+                    </div>
+                    <div class="input-box">
+                        <span class="details">Mobile Number</span>
+                        <input type="text" id="mobNo" name="mobNo" placeholder="Enter your Mobile Number">
+                    </div>
+                    <div class="input-box">
+                        <span class="details">Email</span>
+                        <input type="email" id="email" name="email" placeholder="Enter your Email">
+                    </div>
+                    <div class="input-box">
+                        <span class="details">Password</span>
+                        <input type="password" id="password" name="password" placeholder="Enter your password">
+                    </div>
+                </div>
+                <div class="feedback-details">
+                    <input type="radio" name="rate" id="dot1">
+                    <input type="radio" name="rate" id="dot2">
+                    <span class="feedback-title">Gender</span>
+                    <div class="category">
+                        <label for="dot1" id="cd">
+                            <span class="dot one"></span>
+                            <span class="feedback">Male</span>
+                        </label>
+                        <label for="dot2" id="cd24">
+                            <span class="dot two"></span>
+                            <span class="feedback">Female</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="btn1">
+                    <button type="submit" onclick="required()">Submit</button>
+                </div>
+            </form>
+            <p class="log">Already have an account? <a href="{{ url_for('login')}}">Login here</a></p>
+        </div>
+    </div>
+
+</body>
+
+</html>
