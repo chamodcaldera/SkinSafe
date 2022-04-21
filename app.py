@@ -538,6 +538,19 @@ def addPress():
         return redirect(url_for('displayPress'))
     return redirect(url_for('login'))
 
+
+# profile display
+@app.route("/display")
+def displayProfile():
+    if 'loggedin' in session:
+        conn = mysqldb.connect()
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM User WHERE id = % s', (session['id'],))
+        account = cursor.fetchone()
+        return render_template("profile.html", tab=0, account=account)
+    return redirect(url_for('login'))
+
+
 def containsNumber(value):
     for character in value:
         if character.isdigit():
