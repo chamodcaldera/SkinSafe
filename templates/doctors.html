@@ -60,23 +60,23 @@
 
         <main>
 
-            <form method="post" >
+            <form method="post" action="{{ url_for('doctor_search') }}" >
                 <div class="search-doctor ">
                     <span class="las la-search "></span>
                     <input type="text " name="email" placeholder="Enter Doctor Email " />
                 </div>
                 <br>
-                <a href="{{ url_for('doctor_search')}}">
-                    <button   id="removepatient"> Search Doctor</button>
-                </a>
 
-                <a href="{{ url_for('regDoc')}}">
-                    <button   id="removepatient" name="button" value="addDoc"> Add Doctor</button>
-                </a>
+                <button   id="removepatient" name="button" value="searchDoc"> Search Doctor</button>
 
-                <a href="{{ url_for('doctor_remove')}}">
-                    <button id="remove-doctor" name="button" value="removeDoc">Remove Doctor </button>
-                </a>
+
+
+                <button   id="removepatient" name="button" value="addDoc"> Add Doctor</button>
+
+
+
+                <button id="remove-doctor" name="button" value="removeDoc">Remove Doctor </button>
+
 {#                <a href="{{ url_for('#')}}">#}
 {#                    <button id="edit-details"> Edit Details</button>#}
 {#                </a>#}
@@ -132,6 +132,16 @@
                             <tr>
                                 <td>
                                     <h3>Mobile Number </h3>
+                                </td>
+                                <td>
+                                    <p> {{ account[7] }}</p>
+
+                                </td>
+                            </tr>
+                        </tr>
+                            <tr>
+                                <td>
+                                    <h3>Address</h3>
                                 </td>
                                 <td>
                                     <p> {{ account[6] }}</p>

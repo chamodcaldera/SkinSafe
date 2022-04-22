@@ -448,13 +448,13 @@ def doctor_search():
             msg=''
             account=[]
             if request.method == 'POST':
-                if (request.form.get('button')=='addDoc'):
-                    return redirect(url_for('regDoc'))
-                elif (request.form.get('button')=='removeDoc'):
-                    return redirect(url_for('doctor_remove'))
-
                 if 'email' in request.form:
                     email = request.form['email']
+                    if (request.form.get('button')=='addDoc'):
+                        return redirect(url_for('regDoc'))
+                    elif (request.form.get('button')=='removeDoc'):
+                        return redirect(url_for('doctor_remove',email=email))
+
                     cursor.execute(
                         'SELECT docId ,docFirstName ,docLastName ,docAge ,docEmail , docGender ,docAddress , docMobileNo  FROM Doctor WHERE docEmail=%s',email)
                     account = cursor.fetchone()
@@ -472,8 +472,8 @@ def doctor_search():
 
     # display selected doctor
 
-@app.route('/doctorRemove', methods=['GET', 'POST'])
-def doctor_remove():
+@app.route('/doctorRemove/<email>', methods=['GET', 'POST'])
+def doctor_remove(email):
 
     try:
         if 'loggedin' in session:
@@ -481,16 +481,20 @@ def doctor_remove():
             cursor = conn.cursor()
             msg = ''
             account = []
-            if request.method == 'POST' and 'email' in request.form:
-                email = request.form['email']
-                cursor.execute('DELETE FROM Doctor WHERE docEmail=%s',email)
-                cursor.execute(
-                    'SELECT docId ,docFirstName ,docLastName ,docAge ,docEmail , docGender ,docAddress , docMobileNo  FROM Doctor WHERE docEmail=%s',
-                    email)
-                account = cursor.fetchone()
-                if account is None:
-                    account = []
-                    msg = 'The doctor registered from this email '+'(' + email + ')'+'removed successfully!'
+            cursor.execute('SELECT * FROM Doctor WHERE docEmail=%s',email)
+            account = cursor.fetchone()
+            if account is None:
+                account = []
+                msg = 'There is no doctor registered from this email ' + '(' + email + ')!'
+                return render_template("doctors.html", account=account, msg=msg)
+
+            cursor.execute('DELETE FROM Doctor WHERE docEmail=%s',email)
+            conn.commit()
+            cursor.execute('SELECT docId ,docFirstName ,docLastName ,docAge ,docEmail , docGender ,docAddress , docMobileNo  FROM Doctor WHERE docEmail=%s',email)
+            account = cursor.fetchone()
+            if account is None:
+                account = []
+                msg = 'The doctor registered from this email '+'(' + email + ')'+'removed successfully!'
 
             return render_template("doctors.html", account=account, msg=msg)
         return redirect(url_for('login'))
@@ -499,6 +503,7 @@ def doctor_remove():
     finally:
         cursor.close()
         conn.close()
+
 # prescription display
 @app.route("/displayPress")
 def displayPress():
