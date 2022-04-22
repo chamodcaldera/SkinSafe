@@ -41,7 +41,7 @@ app = Flask(__name__)
 app.secret_key = 'super secret key'
 # app.config['SESSION_TYPE'] = 'filesystem'
 # sess.init_app(app)
-UPLOAD_FOLDER_TEST='/Users/pramudiranaweera/Documents/SkinSafe/static/TestReports'
+UPLOAD_FOLDER_TEST=r'H:\University of westminister\Level 5\SDGP\flaskProject\TestReports'
 UPLOAD_FOLDER_PRESS = r'H:\University of westminister\Level 5\SDGP\flaskProject\presImg'
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER_PRESS
@@ -251,7 +251,7 @@ def login_new():
 #user Logout
 @app.route('/logout')
 def logout():
-    pdfList = os.listdir('./static/TestReports')
+    pdfList = os.listdir('TestReports')
     testReportsList = ['./static/TestReports/' + image for image in pdfList if ("userId{0}".format(str(session['id']))) in image]
     for pdf in testReportsList:
         os.remove(pdf)
@@ -651,7 +651,7 @@ def displayTestReport():
 
         #display images
 
-        pdfList = os.listdir('./static/TestReports')
+        pdfList = os.listdir('TestReports')
         testReportsList = ['./TestReports/' + image for image in pdfList if ("userId{0}".format(str(session['id']))) in image]
 
         return render_template("testReport.html",testReportList=testReportsList)
