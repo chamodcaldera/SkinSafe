@@ -447,14 +447,20 @@ def doctor_search():
             cursor = conn.cursor()
             msg=''
             account=[]
-            if request.method == 'POST'and 'email' in request.form:
-                email = request.form['email']
-                cursor.execute(
-                    'SELECT docId ,docFirstName ,docLastName ,docAge ,docEmail , docGender ,docAddress , docMobileNo  FROM Doctor WHERE docEmail=%s',email)
-                account = cursor.fetchone()
-                if account is None:
-                    account = []
-                    msg='There is No Doctor Registered From This Email. ('+email+')'
+            if request.method == 'POST':
+                if (request.form.get('button')=='addDoc'):
+                    return redirect(url_for('regDoc'))
+                elif (request.form.get('button')=='removeDoc'):
+                    return redirect(url_for('doctor_remove'))
+
+                if 'email' in request.form:
+                    email = request.form['email']
+                    cursor.execute(
+                        'SELECT docId ,docFirstName ,docLastName ,docAge ,docEmail , docGender ,docAddress , docMobileNo  FROM Doctor WHERE docEmail=%s',email)
+                    account = cursor.fetchone()
+                    if account is None:
+                        account = []
+                        msg='There is No Doctor Registered From This Email. ('+email+')'
 
             return render_template("doctors.html", account=account,msg=msg)
         return redirect(url_for('login'))
