@@ -120,6 +120,7 @@ span{
 }
 #popup.active{
 	visibility: visible;
+	background: rgba(248, 255, 253, 0.51);
 	opacity: 1;
 	transition: 0.5s;
 }
@@ -133,7 +134,7 @@ span{
     align-content: center;
 	width:350px;
 	height: 400px;
-	background: white;
+	background: transparent;
 	padding: 10px;
 	overflow: hidden;
 	overflow-y: scroll;

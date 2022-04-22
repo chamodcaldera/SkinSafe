@@ -42,7 +42,7 @@ app.secret_key = 'super secret key'
 # app.config['SESSION_TYPE'] = 'filesystem'
 # sess.init_app(app)
 UPLOAD_FOLDER_TEST='/Users/pramudiranaweera/Documents/SkinSafe/static/TestReports'
-UPLOAD_FOLDER_PRESS = r'H:\University of westminister\Level 5\SDGP\flaskProject\presImg'
+UPLOAD_FOLDER_PRESS = '/Users/pramudiranaweera/Documents/SkinSafe/static/Prescriptions'
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER_PRESS
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER_TEST
@@ -251,6 +251,14 @@ def login_new():
 #user Logout
 @app.route('/logout')
 def logout():
+    pdfList = os.listdir('./static/TestReports')
+    testReportsList = ['./static/TestReports/' + image for image in pdfList if ("userId{0}".format(str(session['id']))) in image]
+    for pdf in testReportsList:
+        os.remove(pdf)
+    imageList = os.listdir('./static/Prescriptions')
+    imagelist = ['./static/Prescriptions/' + image for image in imageList if ("userId{0}".format(str(session['id']))) in image]
+    for image in imagelist:
+        os.remove(image)
     session.pop('loggedin', None)
     session.pop('id', None)
     session.pop('username', None)
@@ -861,7 +869,7 @@ def channelling():
             conn.commit()
             msg='Channel number '+channelId+' deleted successfully'
 
-        cursor.execute('SELECT c.channelId As id, c.channel_date As date, c.status as status, d.docFirstName as fname, d.docLastName As last,dt.timeStart As start FROM Channelling c JOIN Doctor d ON c.doctorId=d.docId JOIN DoctorTimeSlots dt ON d. docId=dt.doctorId WHERE id = % s', (session['id'],))
+        cursor.execute('SELECT c.name, c.channelId As id, c.channel_date As date, c.status as status, d.docFirstName as fname, d.docLastName As last,dt.timeStart As start FROM Channelling c JOIN Doctor d ON c.doctorId=d.docId JOIN DoctorTimeSlots dt ON d. docId=dt.doctorId WHERE id = % s', (session['id'],))
         record = cursor.fetchall()
         return render_template("profile.html",tab=3, account=account,record=record,msg=msg)
     return redirect(url_for('login'))
