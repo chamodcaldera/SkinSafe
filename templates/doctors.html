@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Admin</title>
+    <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+    <link rel="stylesheet" href='../static/admin.css'>
+    <link rel="stylesheet" href='../static/doctors.css'>
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <h2><span class="lab la-accusoft"></span>Admin</h2>
+        </div>
+        <div class="sidebar-menu">
+            <ul>
+                <li>
+                    <a href="dashboard.html"><span class="las la-igloo"></span>
+                        <span>Dashboard</span></a>
+                </li>
+                <li>
+                    <a href="{{ url_for('docD')}}" class="active"><span class="las la-user-nurse"></span>
+                        <span>Doctors</span></a>
+                </li>
+                <li>
+                    <a href="Patients..html"><span class="las la-procedures "></span>
+                        <span>Patients</span></a>
+                </li>
+
+                <li>
+                    <a href=" "><span class="las la-clipboard-list "></span>
+                        <span>Clinic Reports</span></a>
+                </li>
+                <li>
+                    <a href=" "><span class="las la-pills "></span>
+                        <span>Prescriptions</span></a>
+                </li>
+
+                <li>
+                    <a href="{{ url_for('logout')}} "><span class="las la-sign-out-alt "></span>
+                        <span>Logout</span></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="main-content ">
+        <header>
+            <h2>
+                <label for=" ">
+                        <span class="las la-bars "></span>
+                    </label>Doctors
+            </h2>
+
+            <div class="search-wrapper ">
+                <span class="las la-search "></span>
+                <input type="search " name="email" action="{{ url_for('doctor_search')}}" placeholder="Search here " />
+            </div>
+        </header>
+
+        <main>
+            <button action="{{ url_for('registerDoctor')}}" id="add-doctor"> Add Doctor</button>
+            <button id="remove-doctor">Remove Doctor </button>
+            <button id="edit-details"> Edit Details</button>
+            <div class="search-doctor ">
+                <span class="las la-search "></span>
+                <input type="search " placeholder="Search Doctor " />
+            </div>
+            <div class="cd2 ">
+                <span id="cd-2 ">
+                    {% if account == None %}
+                        <table>
+
+
+                            <tr>
+                                <td>
+                                    <h3>Full Name</h3>
+                                </td>
+                                <td>
+                                    <p>{{ account[1] + " " +account[2]}}</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h3>Doctor ID</h3>
+                                </td>
+                                <td>
+                                    <p>{{ account[0]}}</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h3>Age</h3>
+                                </td>
+                                <td>
+                                    <p>{{ account[3]}}</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h3 >Email</h3>
+                                </td>
+                                <td>
+                                    <p>{{ account[4]}}</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h3>Address</h3>
+                                </td>
+                                <td>
+                                    <p>{{ account[5]}}</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h3>Mobile Number </h3>
+                                </td>
+                                <td>
+                                    <p> {{ account[6] }}</p>
+
+                                </td>
+                            </tr>
+
+                        </table>
+                    {% else %}
+                        <p>{{ msg }}</p>
+                    {% endif %}
+                </span>
+            </div>
+        </main>
+
+    </div>
+
+</body>
+
+</html>
