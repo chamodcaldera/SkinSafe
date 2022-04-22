@@ -1,6 +1,6 @@
 import base64
 import secrets
-
+from datetime import date
 import keras
 from flask import Flask, request, render_template, flash, redirect, jsonify, url_for
 import cv2
@@ -401,46 +401,46 @@ def registerDoctor():
 
 # add appointments
 
-# add appointments
-
-@app.route('/addChannel', methods=['GET','POST'])
-def add_channel():
-
-    if 'loggedin' in session:
-
-        conn = mysqldb.connect()
-        cursor = conn.cursor()
-        if request.method == 'POST' and 'appointment' in request.form:
-            name = request.form['name']
-            if(name==''):
-                appointment = request.form['appointment']
-                date,time,meridiem=appointment.split(' ')
-                hour,min = (int(x) for x in time.split(':'))
-                month,day, year = (int(x) for x in date.split('/'))
-                ans = datetime.date(year, month, day)
-                weekday=ans.strftime("%A")
-                cursor.execute('SELECT dt.docterId AS docID, dt.day AS day, dt.timeStart AS start, dt.timeEnd AS end, d.docFirstName AS firstName, d.docLastName AS lastName FROM DoctorTimeSlots dt JOIN Doctor d ON dt.docterId = d.docId WHERE day = % s', weekday)
-                doctorList = cursor.fetchall()
-                return render_template("channelling.html", doctorList=doctorList)
-
-            elif request.method == 'POST' and 'name' in request.form and 'email' in request.form and 'mobNo' in request.form and 'appointment' in request.form and 'status' in request.form or 'message' in request.form:
-
-                email = request.form['email']
-                mobNo = request.form['mobNo']
-                confirmAppointments = request.form['appointment']
-                doctorId = request.form['doctorId']
-                status = 'Pending'
-                msg = request.form['message']
-                confirmDate, confirmTime, confirmMeridiem = confirmAppointments.split(' ')
-                sql = "INSERT INTO Channelling(id,channel_date ,channel_time , docterId , status) VALUES(%s, %s, %s,%s, %s)"
-                data = ((session['id']), confirmDate, confirmTime, doctorId, status)
-
-                cursor.execute(sql, data)
-                conn.commit()
-
-
-        return render_template("channelling.html",)
-    return redirect(url_for('login'))
+# # add appointments
+#
+# @app.route('/addChannel', methods=['GET','POST'])
+# def add_channel():
+#
+#     if 'loggedin' in session:
+#
+#         conn = mysqldb.connect()
+#         cursor = conn.cursor()
+#         if request.method == 'POST' and 'appointment' in request.form:
+#             name = request.form['name']
+#             if(name==''):
+#                 appointment = request.form['appointment']
+#                 date,time,meridiem=appointment.split(' ')
+#                 hour,min = (int(x) for x in time.split(':'))
+#                 month,day, year = (int(x) for x in date.split('/'))
+#                 ans = datetime.date(year, month, day)
+#                 weekday=ans.strftime("%A")
+#                 cursor.execute('SELECT dt.docterId AS docID, dt.day AS day, dt.timeStart AS start, dt.timeEnd AS end, d.docFirstName AS firstName, d.docLastName AS lastName FROM DoctorTimeSlots dt JOIN Doctor d ON dt.docterId = d.docId WHERE day = % s', weekday)
+#                 doctorList = cursor.fetchall()
+#                 return render_template("channelling.html", doctorList=doctorList)
+#
+#             elif request.method == 'POST' and 'name' in request.form and 'email' in request.form and 'mobNo' in request.form and 'appointment' in request.form and 'status' in request.form or 'message' in request.form:
+#
+#                 email = request.form['email']
+#                 mobNo = request.form['mobNo']
+#                 confirmAppointments = request.form['appointment']
+#                 doctorId = request.form['doctorId']
+#                 status = 'Pending'
+#                 msg = request.form['message']
+#                 confirmDate, confirmTime, confirmMeridiem = confirmAppointments.split(' ')
+#                 sql = "INSERT INTO Channelling(id,channel_date ,channel_time , docterId , status) VALUES(%s, %s, %s,%s, %s)"
+#                 data = ((session['id']), confirmDate, confirmTime, doctorId, status)
+#
+#                 cursor.execute(sql, data)
+#                 conn.commit()
+#
+#
+#         return render_template("channelling.html",)
+#     return redirect(url_for('login'))
 
 # dashboard.html load
 
@@ -874,6 +874,64 @@ def channelling():
         return render_template("profile.html",tab=3, account=account,record=record,msg=msg)
     return redirect(url_for('login'))
 
+# testChanneling
+
+@app.route('/addChannel', methods=['GET','POST'])
+def add_channel():
+    appNumArray=[]
+    if 'loggedin' in session:
+        appointmentNumber=0
+        conn = mysqldb.connect()
+        cursor = conn.cursor()
+        finalList = []
+        if request.method == 'POST' and 'appointment' in request.form:
+            appointmentNumber = request.form.get('appNum')
+            if(appointmentNumber is None):
+
+                appointment = request.form['appointment']
+                year,month, day = (int(x) for x in appointment.split('-'))
+                ans = date(year, month, day)
+                weekday=ans.strftime("%A")
+                cursor.execute('SELECT dt.doctorId AS docID, dt.day AS day, dt.timeStart AS start, dt.timeEnd AS end, d.docFirstName AS firstName, d.docLastName AS lastName FROM DoctorTimeSlots dt JOIN Doctor d ON dt.doctorId = d.docId WHERE day = % s',(weekday) )
+                doctorList = cursor.fetchall()
+
+                for doc in doctorList:
+                    doctorListAppointment = list(doctorList)
+                    cursor.execute('SELECT channel_time, channel_date doctorId FROM Channelling WHERE channel_date=%s AND doctorId=%s',(appointment, doc[0]))
+                    totApp = cursor.fetchone()
+                    if (totApp is None):
+                        appointmentNumber = 1
+                    else:
+                        appointmentNumber = len(totApp) + 1
+                    docList=list(doc)
+                    docList.append(str(appointmentNumber))
+                    doc=tuple(docList)
+
+                    finalList.append(doc)
+                    print(finalList)
+                    print(type(finalList))
+                finalList=tuple(finalList)
+                print(finalList)
+                print(type(finalList))
+                return render_template("Channelling.html", doctorList=finalList,appNumArray=appNumArray,range=range)
+
+            elif request.method == 'POST' and 'name' in request.form and 'email' in request.form and 'appNum' in request.form and 'mobNo' in request.form and 'appointment' in request.form and 'status' in request.form or 'message' in request.form:
+                name=request.form['name']
+                email = request.form['email']
+                mobNo = request.form['mobNo']
+                confirmDate = request.form['appointment']
+                doctorId = request.form['doctorId']
+                status = 'Pending'
+                msg = request.form['message']
+                sql = "INSERT INTO Chnnelling(id,name,channel_date ,channel_time , doctorId , status,message) VALUES(%s, %s, %s,%s, %s,%s)"
+                data = ((session['id']), name, confirmDate, appointmentNumber, doctorId, status,msg,)
+
+                cursor.execute(sql, data)
+                conn.commit()
+
+
+        return render_template("Channeling.html",)
+    return redirect(url_for('login'))
 
 
 def containsNumber(value):

@@ -85,13 +85,14 @@
 
                 <div class="formElement">
                     <select name="doctorId" id="doctor" class="form-select">
-                    <option value="">Select Doctor</option>
-                        {% for doctorList in doctorList %}
-                            <option value="{{ doctorList[0] }}">{{ doctorList[4] +" "+doctorList[5] +"("+doctorList[2] +" - "+doctorList[3]+")" }}</option>
-                        {% endfor %}
-
-                    </select>
+                        <option value="">Select Doctor</option>
+                            {% for doctorList in doctorList %}
+                                <option value="{{ doctorList[0] }}">{{ doctorList[4] +" "+doctorList[5] +"("+doctorList[2] +" - "+doctorList[3]+") ->"+'( AVAILABLE APPOINTMENT NUMBER : '+doctorList[6]+' )' }}</option>
+                                <input type="hidden" value="{{ doctorList[6] }}" name="appNum">
+                            {% endfor %}
+                        </select>
                 </div>
+
 
                 <div class="formElement">
                     <label for="message">Message</label>
@@ -106,7 +107,7 @@
       </section>
 
             <script type="text/javascript">
-                
+
                 function validate() {
                     document.getElementById("name").disabled = false;
                     document.getElementById("email").disabled = false;
@@ -119,14 +120,13 @@
 
 
             </script>
-
-
+             <script>
 
 
                     document.getElementById("name").disabled = false;
                     document.getElementById("email").disabled = false;
                     document.getElementById("mobNo").disabled = false;
-                }
+
             </script>
 </body>
 </html>
