@@ -41,10 +41,11 @@ app = Flask(__name__)
 app.secret_key = 'super secret key'
 # app.config['SESSION_TYPE'] = 'filesystem'
 # sess.init_app(app)
+UPLOAD_FOLDER_TEST='/Users/pramudiranaweera/Documents/SkinSafe/static/TestReports'
 UPLOAD_FOLDER_PRESS = r'H:\University of westminister\Level 5\SDGP\flaskProject\presImg'
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER_PRESS
-
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER_TEST
 
 # check if the directory was created and image stored
 
@@ -565,7 +566,7 @@ def patient_remove(email):
             account = cursor.fetchone()
             if account is None:
                 account = []
-                msg = 'The doctor registered from this email '+'(' + email + ')'+'removed successfully!'
+                msg = 'The Patient registered from this email '+'(' + email + ')'+'removed successfully!'
             else:
                 msg='Something went wrong while Removing the Patient Registered from this email ('+email+')'
             return render_template("patients.html", account=account, msg=msg)
@@ -585,8 +586,8 @@ def displayPress():
         conn = mysqldb.connect()
         cursor = conn.cursor()
 
-        cursor.execute('SELECT * FROM User WHERE id = % s', (session['id'],))
-        account = cursor.fetchone()
+        # cursor.execute('SELECT * FROM User WHERE id = % s', (session['id'],))
+        # account = cursor.fetchone()
         cursor.execute('SELECT * FROM Prescription WHERE id = % s', (session['id'],))
         record = cursor.fetchone()
         while record is not None:
@@ -611,6 +612,44 @@ def displayPress():
         return render_template("prescription.html",imagelist=imagelist)
 
     return redirect(url_for('login'))
+
+# display testReport
+
+# prescription display
+@app.route("/displayTestReport")
+def displayTestReport():
+
+    if 'loggedin' in session:
+        conn = mysqldb.connect()
+        cursor = conn.cursor()
+
+        # cursor.execute('SELECT * FROM User WHERE id = % s', (session['id'],))
+        # account = cursor.fetchone()
+        cursor.execute('SELECT * FROM TestReports WHERE id = % s', (session['id'],))
+        record = cursor.fetchone()
+        while record is not None:
+
+            storeFilePath = "./static/TestReports/userId{0}.img".format(str(session['id'])) + str(record[0]) + ".pdf"
+            print(record)
+            base64_img_bytes=record[2]
+            # base64_img_bytes = base64_img.encode('utf-8')
+            # with open(storeFilePath, "wb") as File:
+            #     File.write(record[2])
+            #     File.close()
+            with open(storeFilePath, 'wb') as file_to_save:
+                decoded_image_data = base64.decodebytes(base64_img_bytes)
+                file_to_save.write(decoded_image_data)
+            record = cursor.fetchone()
+
+        #display images
+
+        pdfList = os.listdir('./static/TestReports')
+        testReportsList = ['./TestReports/' + image for image in pdfList if ("userId{0}".format(str(session['id']))) in image]
+
+        return render_template("testReport.html",testReportList=testReportsList)
+
+    return redirect(url_for('login'))
+
 
 #check file extention
 def allowed_file(filename):
@@ -659,6 +698,50 @@ def addPress():
         return redirect(url_for('displayPress'))
     return redirect(url_for('login'))
 
+
+#  add test report
+
+# add prescription
+
+@app.route('/addTestReport', methods=['GET','POST'])
+def addTestReport():
+    if 'loggedin' in session:
+        msg = ''
+
+        if request.method == 'POST':
+            if 'image' not in request.files:
+                msg='No file input'
+                return render_template("testReport.html", msg=msg)
+            file = request.files['testReport']
+            # if user does not select file, browser also
+            # submit an empty part without filename
+            if file.filename == '':
+                flash('No selected file')
+                return redirect(request.url)
+            if file and allowed_file(file.filename):
+                file.filename="TestReport"+str(session['id'])+".pdf"
+                # filename = secure_filename(file.filename)
+                file_location=os.path.join(UPLOAD_FOLDER_TEST, file.filename)
+                file.save(file_location)
+
+                # newFile = open(file_location, 'rb').read()
+                # We must encode the file to get base64 string
+                with open(file_location,'rb') as binary_file:
+                    binary_file_data = binary_file.read()
+                    base64_encoded_data = base64.b64encode(binary_file_data)
+                    uploadFile = base64_encoded_data.decode('utf-8')
+
+                    # uploadFile = base64.b64encode(newFile)
+                    # _binaryFile = insertBLOB(file)
+                sql = "INSERT INTO TestReports(id,testReports) VALUES(%s ,%s)"
+                data = ((session['id']), uploadFile,)
+                conn = mysqldb.connect()
+                cursor = conn.cursor()
+                cursor.execute(sql, data)
+                conn.commit()
+        # return render_template("prescription.html",msg=msg)
+        return redirect(url_for('displayPress'))
+    return redirect(url_for('login'))
 
 @app.route('/main', methods=['GET','POST'])
 def main():
