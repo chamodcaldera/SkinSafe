@@ -6,7 +6,9 @@
     <title>Admin</title>
     <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
     <link rel="stylesheet" href='../static/admin.css'>
-    <link rel="stylesheet" href='../static/Patients.css'>
+{#    <link rel="stylesheet" href='../static/Patients.css'>#}
+    <link rel="stylesheet" href='../static/doctors.css'>
+
 </head>
 
 <body>
@@ -25,7 +27,7 @@
                         <span>Doctors</span></a>
                 </li>
                 <li>
-                    <a href="{{ url_for('pat')}}" class="active"><span class="las la-procedures"></span>
+                    <a href="{{ url_for('patient_Search')}}" class="active"><span class="las la-procedures"></span>
                         <span>Patients</span></a>
                 </li>
 
@@ -58,19 +60,100 @@
 
         <main>
 
-            <div class="searchpper">
-                <span class="las la-search"></span>
-                <input type="search" placeholder="Search Patient" />
-            </div>
+            <form method="post" action="{{ url_for('patient_Search') }}" >
+                <div class="search-doctor ">
+                    <span class="las la-search "></span>
+                    <input type="text " name="email" placeholder="Enter Patient Email " />
+                </div>
+                <br>
 
-            <a href="{{ url_for('regDoc')}}">
-            <button   id="removepatient"> Remove Patient</button>
-                </a>
+                <button   id="removepatient" name="button" value="searchPat"> Search Patient</button>
 
 
-            <div class="cd1">
 
-                <span id="cd">search result appear here.</span>
+                <button   id="removepatient" name="button" value="addPat"> Add Patient</button>
+
+
+
+                <button id="remove-doctor" name="button" value="removePat">Remove Patient </button>
+
+{#                <a href="{{ url_for('#')}}">#}
+{#                    <button id="edit-details"> Edit Details</button>#}
+{#                </a>#}
+
+            </form>
+
+            <div class="cd2 ">
+                <span id="cd-2 ">
+                    {% if account !=[]%}
+                        <table>
+
+
+                            <tr>
+                                <td>
+                                    <h3>Full Name</h3>
+                                </td>
+                                <td>
+                                    <p>{{ account[1] + " " +account[2]}}</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h3>User ID</h3>
+                                </td>
+                                <td>
+                                    <p>{{ account[0]}}</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h3>Age</h3>
+                                </td>
+                                <td>
+                                    <p>{{ account[3]}}</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h3 >Email</h3>
+                                </td>
+                                <td>
+                                    <p>{{ account[4]}}</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h3>Address</h3>
+                                </td>
+                                <td>
+                                    <p>{{ account[5]}}</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h3>Mobile Number </h3>
+                                </td>
+                                <td>
+                                    <p> {{ account[7] }}</p>
+
+                                </td>
+                            </tr>
+                        </tr>
+                            <tr>
+                                <td>
+                                    <h3>Address</h3>
+                                </td>
+                                <td>
+                                    <p> {{ account[6] }}</p>
+
+                                </td>
+                            </tr>
+
+                        </table>
+                    {% else %}
+                        <p>{{ msg }}</p>
+                    {% endif %}
+                </span>
             </div>
         </main>
 

@@ -423,7 +423,7 @@ def add_channel():
                 status = 'Pending'
                 msg = request.form['message']
                 confirmDate, confirmTime, confirmMeridiem = confirmAppointments.split(' ')
-                sql = "INSERT INTO Chanelling(id,channel_date ,channel_time , docterId , status) VALUES(%s, %s, %s,%s, %s)"
+                sql = "INSERT INTO Channelling(id,channel_date ,channel_time , docterId , status) VALUES(%s, %s, %s,%s, %s)"
                 data = ((session['id']), confirmDate, confirmTime, doctorId, status)
 
                 cursor.execute(sql, data)
@@ -495,7 +495,8 @@ def doctor_remove(email):
             if account is None:
                 account = []
                 msg = 'The doctor registered from this email '+'(' + email + ')'+'removed successfully!'
-
+            else:
+                msg='Something went wrong while Removing the Doctor Registered from this email ('+email+')'
             return render_template("doctors.html", account=account, msg=msg)
         return redirect(url_for('login'))
     except Exception as e:
@@ -503,6 +504,78 @@ def doctor_remove(email):
     finally:
         cursor.close()
         conn.close()
+
+
+# patient database management
+
+#display selected doctor
+
+@app.route('/patientSearch', methods=['GET','POST'])
+def patient_Search():
+
+    try:
+        if 'loggedin' in session:
+            conn = mysqldb.connect()
+            cursor = conn.cursor()
+            msg=''
+            account=[]
+            if request.method == 'POST':
+                if 'email' in request.form:
+                    email = request.form['email']
+                    if (request.form.get('button')=='addPat'):
+                        return redirect(url_for('register'))
+                    elif (request.form.get('button')=='removePat'):
+                        return redirect(url_for('patient_remove',email=email))
+
+                    cursor.execute('SELECT id ,firstName  ,lastName  ,age ,email  , gender ,address , mobileNo  FROM User WHERE email=%s',email)
+                    account = cursor.fetchone()
+                    if account is None:
+                        account = []
+                        msg='There is No Patient Registered From This Email. ('+email+')'
+
+            return render_template("patients.html", account=account,msg=msg)
+        return redirect(url_for('login'))
+    except Exception as e:
+        print(e)
+    finally:
+        cursor.close()
+        conn.close()
+
+    # display selected doctor
+
+@app.route('/patientRemove/<email>', methods=['GET', 'POST'])
+def patient_remove(email):
+
+    try:
+        if 'loggedin' in session:
+            conn = mysqldb.connect()
+            cursor = conn.cursor()
+            msg = ''
+            account = []
+            cursor.execute('SELECT * FROM User WHERE email=%s',email)
+            account = cursor.fetchone()
+            if account is None:
+                account = []
+                msg = 'There is no Patient registered from this email ' + '(' + email + ')!'
+                return render_template("patient.html", account=account, msg=msg)
+
+            cursor.execute('DELETE FROM User WHERE email=%s',email)
+            conn.commit()
+            cursor.execute('SELECT * FROM User WHERE email=%s',email)
+            account = cursor.fetchone()
+            if account is None:
+                account = []
+                msg = 'The doctor registered from this email '+'(' + email + ')'+'removed successfully!'
+            else:
+                msg='Something went wrong while Removing the Patient Registered from this email ('+email+')'
+            return render_template("patients.html", account=account, msg=msg)
+        return redirect(url_for('login'))
+    except Exception as e:
+        print(e)
+    finally:
+        cursor.close()
+        conn.close()
+
 
 # prescription display
 @app.route("/displayPress")
@@ -701,11 +774,11 @@ def channelling():
             channelId = request.form['channelId']
             conn = mysqldb.connect()
             cursor = conn.cursor()
-            cursor.execute('DELETE FROM Chanelling WHERE channelId=%s',channelId)
+            cursor.execute('DELETE FROM Channelling WHERE channelId=%s',channelId)
             conn.commit()
             msg='Channel number '+channelId+' deleted successfully'
 
-        cursor.execute('SELECT c.channelId As id, c.channel_date As date, c.status as status, d.docFirstName as fname, d.docLastName As last,dt.timeStart As start FROM Chanelling c JOIN Doctor d ON c.docterId=d.docId JOIN DoctorTimeSlots dt ON d. docId=dt.doctorId WHERE id = % s', (session['id'],))
+        cursor.execute('SELECT c.channelId As id, c.channel_date As date, c.status as status, d.docFirstName as fname, d.docLastName As last,dt.timeStart As start FROM Channelling c JOIN Doctor d ON c.doctorId=d.docId JOIN DoctorTimeSlots dt ON d. docId=dt.doctorId WHERE id = % s', (session['id'],))
         record = cursor.fetchall()
         return render_template("profile.html",tab=3, account=account,record=record,msg=msg)
     return redirect(url_for('login'))
