@@ -16,6 +16,10 @@ def connection():
     mycursor.execute("CREATE TABLE IF NOT EXISTS Admin (id INT NOT NULL AUTO_INCREMENT,firstName VARCHAR (50) NOT NULL ,lastName VARCHAR (50) NOT NULL ,email VARCHAR(50) NOT NULL,password VARCHAR (255) NOT NULL, mobileNo VARCHAR(10),PRIMARY KEY (id))")  # Execute SQL Query to create a table into your database
     mycursor.execute("CREATE TABLE IF NOT EXISTS DoctorTimeSlots (timeSlotId INT NOT NULL AUTO_INCREMENT,doctorId INT NOT NULL  ,day VARCHAR (20) NOT NULL ,timeStart VARCHAR(10) NOT NULL, timeEnd VARCHAR(10) NOT NULL, PRIMARY KEY (timeSlotId),FOREIGN KEY (doctorId)REFERENCES doctor (docId)ON DELETE CASCADE)")  # Execute SQL Query to create a table into your database
 
+    # mycursor.execute("INSERT INTO Admin(id,firstName,lastName,email,password,mobileNo) VALUES (1,'Admin','00','admin00@gmail.com','15387Ad',0779876547)")
+    # mycursor.execute("INSERT INTO Admin(id,firstName,lastName,email,password,mobileNo) VALUES (2,'Admin','01','admin01@gmail.com','15388Ad',0726985234)")
+    # mycursor.execute("INSERT INTO Admin(id,firstName,lastName,email,password,mobileNo) VALUES (3,'Admin','02','admin02@gmail.com','15389Ad',0714896320)")
+    # mysqldb.commit()
     # mysqldb.close()  # Connection Close
     mysqldb.close()
 

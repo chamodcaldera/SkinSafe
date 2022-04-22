@@ -42,7 +42,7 @@ app.secret_key = 'super secret key'
 # app.config['SESSION_TYPE'] = 'filesystem'
 # sess.init_app(app)
 UPLOAD_FOLDER_TEST='/Users/pramudiranaweera/Documents/SkinSafe/static/TestReports'
-UPLOAD_FOLDER_PRESS = '/Users/pramudiranaweera/Documents/SkinSafe/static/Prescriptions'
+UPLOAD_FOLDER_PRESS = r'H:\University of westminister\Level 5\SDGP\flaskProject\presImg'
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER_PRESS
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER_TEST
