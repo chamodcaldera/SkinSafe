@@ -33,6 +33,10 @@ body {
     margin: 7px;
     color: #0e4371;
 }
+.email a{
+    text-decoration: none;
+    color: #0e4371;
+}
 
 .bottomNav {
     background-color: #f4f4f4;
