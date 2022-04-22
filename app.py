@@ -41,8 +41,8 @@ app = Flask(__name__)
 app.secret_key = 'super secret key'
 # app.config['SESSION_TYPE'] = 'filesystem'
 # sess.init_app(app)
-UPLOAD_FOLDER_TEST='/Users/pramudiranaweera/Documents/SkinSafe/static/TestReports'
-UPLOAD_FOLDER_PRESS = '/Users/pramudiranaweera/Documents/SkinSafe/static/Prescriptions'
+UPLOAD_FOLDER_TEST=r'H:\University of westminister\Level 5\SDGP\flaskProject\TestReports'
+UPLOAD_FOLDER_PRESS = r'H:\University of westminister\Level 5\SDGP\flaskProject\presImg'
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER_PRESS
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER_TEST
@@ -251,7 +251,7 @@ def login_new():
 #user Logout
 @app.route('/logout')
 def logout():
-    pdfList = os.listdir('./static/TestReports')
+    pdfList = os.listdir('TestReports')
     testReportsList = ['./static/TestReports/' + image for image in pdfList if ("userId{0}".format(str(session['id']))) in image]
     for pdf in testReportsList:
         os.remove(pdf)
@@ -349,6 +349,57 @@ def register():
 
         msg = 'Please fill out the form !'
     return render_template('register.html',msg=msg)
+
+
+@app.route('/registerUserByAd', methods=['GET', 'POST'])
+def register_byAd():
+    msg = ''
+    if request.method == 'POST' and 'firstname' in request.form and 'lastname' in request.form and 'age' in request.form and 'email' in request.form and 'password' in request.form and 'gender' in request.form and 'address' in request.form and 'mobNo' in request.form:
+        firstname = request.form['firstname']
+        lastname = request.form['lastname']
+        age = request.form['age']
+        email = request.form['email']
+        password = request.form['password']
+        address = request.form['address']
+        gender = request.form['gender']
+        mobileNo = request.form['mobNo']
+
+
+        conn = mysqldb.connect()
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM User WHERE email = %s', (email,))
+        account = cursor.fetchone()
+        if account:
+            msg = 'Account already exists !'
+        elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
+            msg = 'Invalid email address !'
+        elif containsNumber(firstname) or containsNumber(lastname):
+            msg = 'First name and Last name must contain only characters!'
+        # elif gender.lower()!='female' or gender.lower()!='female' :
+        #     msg = 'Gender'
+        elif validate(mobileNo) or len(mobileNo)>10:
+            # must see the validation here
+            msg = 'Phone Number must contain only 10 numbers!'
+
+        else:
+
+            # do not save password as a plain text
+            _hashed_password = generate_password_hash(password)
+            # save edits
+            sql = "INSERT INTO User(firstName,lastName, age, email, password, gender, address, mobileNo) VALUES(%s, %s, %s,%s, %s, %s,%s, %s)"
+            data = (firstname, lastname, age,email,_hashed_password, gender, address, mobileNo,)
+            # conn = mysql.connect()
+            # cursor = conn.cursor()
+            cursor.execute(sql, data)
+            conn.commit()
+            msg = 'You have successfully registered\n Login again! !'
+            # return render_template('index.html.html', msg=msg)
+
+
+    elif request.method == 'POST':
+
+        msg = 'Please fill out the form !'
+    return render_template('Patient-register.html',msg=msg)
 
 # doctor register
 @app.route('/registerDoctor', methods=['GET', 'POST'])
@@ -532,7 +583,7 @@ def patient_Search():
                 if 'email' in request.form:
                     email = request.form['email']
                     if (request.form.get('button')=='addPat'):
-                        return redirect(url_for('register'))
+                        return redirect(url_for('register_byAd'))
                     elif (request.form.get('button')=='removePat'):
                         return redirect(url_for('patient_remove',email=email))
 
@@ -651,7 +702,7 @@ def displayTestReport():
 
         #display images
 
-        pdfList = os.listdir('./static/TestReports')
+        pdfList = os.listdir('TestReports')
         testReportsList = ['./TestReports/' + image for image in pdfList if ("userId{0}".format(str(session['id']))) in image]
 
         return render_template("testReport.html",testReportList=testReportsList)

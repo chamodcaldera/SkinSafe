@@ -4,7 +4,6 @@
 
 body {
 	font-family: "Open Sans", sans-serif;
-	line-height: 1.6;
 	margin: 0;
     background-color: #00ace6;
 }
@@ -21,17 +20,21 @@ body {
     display: flex;
 }
 
-.topRight{
+.topRight,img{
     margin-left: 8%;
 }
 
-.topLeft{
+.topLeft,.bottomLeft{
     margin-right: 9%;
 }
 
 .phone,.email,.location,.twitter,.facebook,.instagram,.linkedin{
     margin: 7px;
-    color: #145e9f;
+    color: #0e4371;
+}
+.email a{
+    text-decoration: none;
+    color: #0e4371;
 }
 
 .bottomNav {
@@ -41,8 +44,17 @@ body {
     padding: 15px 0;
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: space-between;
 }
+
+.bottomLeft{
+    display: inline-block;
+}
+
+.navOptions,.appointment-btn{
+    display: inline-block;
+}
+
 
 .navOptions li{
     display: inline;
@@ -66,6 +78,7 @@ body {
 img{
     width: 12%;
     height: 12%;
+    float: left;
 }
 
 .appointment-btn{
