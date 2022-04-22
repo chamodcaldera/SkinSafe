@@ -207,62 +207,75 @@ def presPg():
 @app.route('/login', methods=['GET', 'POST'])
 def login_new():
     msg = ''
-    if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
-        username = request.form['username']
-        password = request.form['password']
-        conn = mysqldb.connect()
-        cursor = conn.cursor()
-        if request.form.get('admin') == 'on':
-            cursor.execute('SELECT * FROM Admin WHERE email = %s ', (username))
-            account = cursor.fetchone()
-            if account:
-                # check = check_password_hash(account[4], password)
-                if account[4]==password:
-                    session['loggedin'] = True
-                    session['id'] = account[0]
-                    session['username'] = account[3]
-                    msg = 'Logged in successfully !'
-                    return render_template('admindashboard.html')
+    try:
+        if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
+            username = request.form['username']
+            password = request.form['password']
+            conn = mysqldb.connect()
+            cursor = conn.cursor()
+            if request.form.get('admin') == 'on':
+                cursor.execute('SELECT * FROM Admin WHERE email = %s ', (username))
+                account = cursor.fetchone()
+                if account:
+                    # check = check_password_hash(account[4], password)
+                    if account[4] == password:
+                        session['loggedin'] = True
+                        session['id'] = account[0]
+                        session['username'] = account[3]
+                        msg = 'Logged in successfully !'
+                        return render_template('admindashboard.html')
+                    else:
+                        msg = 'Incorrect username / password !'
+
                 else:
-                    msg = 'Incorrect username / password !'
-
+                    msg = 'Account dose not exist From this email address '
             else:
-                msg = 'Account dose not exist From this email address '
-        else:
-            cursor.execute('SELECT * FROM User WHERE email = %s ', (username))
-            account = cursor.fetchone()
-            if account:
-                check = check_password_hash(account[5], password)
-                if check:
-                    session['loggedin'] = True
-                    session['id'] = account[0]
-                    session['username'] = account[4]
-                    msg = 'Logged in successfully !'
-                    return render_template('main.html')
+                cursor.execute('SELECT * FROM User WHERE email = %s ', (username))
+                account = cursor.fetchone()
+                if account:
+                    check = check_password_hash(account[5], password)
+                    if check:
+                        session['loggedin'] = True
+                        session['id'] = account[0]
+                        session['username'] = account[4]
+                        msg = 'Logged in successfully !'
+                        return render_template('main.html')
+                    else:
+                        msg = 'Incorrect username / password !'
+
                 else:
-                    msg = 'Incorrect username / password !'
+                    msg = 'Account dose not exist From this email address '
 
-            else:
-                msg = 'Account dose not exist From this email address '
+        return render_template('login.html', msg=msg)
 
+    except Exception as e:
+        print('Something Unexpected Happened [ Error :'+ e +' ]')
+    finally:
+        cursor.close()
+        conn.close()
 
-    return render_template('login.html', msg=msg)
 
 #user Logout
 @app.route('/logout')
 def logout():
-    pdfList = os.listdir('TestReports')
-    testReportsList = ['./static/TestReports/' + image for image in pdfList if ("userId{0}".format(str(session['id']))) in image]
-    for pdf in testReportsList:
-        os.remove(pdf)
-    imageList = os.listdir('./static/Prescriptions')
-    imagelist = ['./static/Prescriptions/' + image for image in imageList if ("userId{0}".format(str(session['id']))) in image]
-    for image in imagelist:
-        os.remove(image)
-    session.pop('loggedin', None)
-    session.pop('id', None)
-    session.pop('username', None)
-    return render_template("home.html")
+    try:
+        pdfList = os.listdir('TestReports')
+        testReportsList = ['./static/TestReports/' + image for image in pdfList if
+                           ("userId{0}".format(str(session['id']))) in image]
+        for pdf in testReportsList:
+            os.remove(pdf)
+        imageList = os.listdir('./static/Prescriptions')
+        imagelist = ['./static/Prescriptions/' + image for image in imageList if
+                     ("userId{0}".format(str(session['id']))) in image]
+        for image in imagelist:
+            os.remove(image)
+        session.pop('loggedin', None)
+        session.pop('id', None)
+        session.pop('username', None)
+        return render_template("home.html")
+    except Exception as e:
+        print('Something Unexpected Happened [ Error :' + e + ' ]')
+
 
 # @app.route('/loginAdmin', methods=['GET', 'POST'])
 # def login_admin():
@@ -302,53 +315,59 @@ def pat():
 # register user
 @app.route('/registerUser', methods=['GET', 'POST'])
 def register():
-    msg = ''
-    if request.method == 'POST' and 'firstname' in request.form and 'lastname' in request.form and 'age' in request.form and 'email' in request.form and 'password' in request.form and 'gender' in request.form and 'address' in request.form and 'mobNo' in request.form:
-        firstname = request.form['firstname']
-        lastname = request.form['lastname']
-        age = request.form['age']
-        email = request.form['email']
-        password = request.form['password']
-        address = request.form['address']
-        gender = request.form['gender']
-        mobileNo = request.form['mobNo']
+    try:
+        msg = ''
+        if request.method == 'POST' and 'firstname' in request.form and 'lastname' in request.form and 'age' in request.form and 'email' in request.form and 'password' in request.form and 'gender' in request.form and 'address' in request.form and 'mobNo' in request.form:
+            firstname = request.form['firstname']
+            lastname = request.form['lastname']
+            age = request.form['age']
+            email = request.form['email']
+            password = request.form['password']
+            address = request.form['address']
+            gender = request.form['gender']
+            mobileNo = request.form['mobNo']
+
+            conn = mysqldb.connect()
+            cursor = conn.cursor()
+            cursor.execute('SELECT * FROM User WHERE email = %s', (email,))
+            account = cursor.fetchone()
+            if account:
+                msg = 'Account already exists !'
+            elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
+                msg = 'Invalid email address !'
+            elif containsNumber(firstname) or containsNumber(lastname):
+                msg = 'First name and Last name must contain only characters!'
+            # elif gender.lower()!='female' or gender.lower()!='female' :
+            #     msg = 'Gender'
+            elif validate(mobileNo) or len(mobileNo) > 10:
+                # must see the validation here
+                msg = 'Phone Number must contain only 10 numbers!'
+
+            else:
+
+                # do not save password as a plain text
+                _hashed_password = generate_password_hash(password)
+                # save edits
+                sql = "INSERT INTO User(firstName,lastName, age, email, password, gender, address, mobileNo) VALUES(%s, %s, %s,%s, %s, %s,%s, %s)"
+                data = (firstname, lastname, age, email, _hashed_password, gender, address, mobileNo,)
+                # conn = mysql.connect()
+                # cursor = conn.cursor()
+                cursor.execute(sql, data)
+                conn.commit()
+                msg = 'You have successfully registered\n Login again! !'
+                # return render_template('index.html.html', msg=msg)
 
 
-        conn = mysqldb.connect()
-        cursor = conn.cursor()
-        cursor.execute('SELECT * FROM User WHERE email = %s', (email,))
-        account = cursor.fetchone()
-        if account:
-            msg = 'Account already exists !'
-        elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
-            msg = 'Invalid email address !'
-        elif containsNumber(firstname) or containsNumber(lastname):
-            msg = 'First name and Last name must contain only characters!'
-        # elif gender.lower()!='female' or gender.lower()!='female' :
-        #     msg = 'Gender'
-        elif validate(mobileNo) or len(mobileNo)>10:
-            # must see the validation here
-            msg = 'Phone Number must contain only 10 numbers!'
+        elif request.method == 'POST':
 
-        else:
+            msg = 'Please fill out the form !'
+        return render_template('register.html', msg=msg)
 
-            # do not save password as a plain text
-            _hashed_password = generate_password_hash(password)
-            # save edits
-            sql = "INSERT INTO User(firstName,lastName, age, email, password, gender, address, mobileNo) VALUES(%s, %s, %s,%s, %s, %s,%s, %s)"
-            data = (firstname, lastname, age,email,_hashed_password, gender, address, mobileNo,)
-            # conn = mysql.connect()
-            # cursor = conn.cursor()
-            cursor.execute(sql, data)
-            conn.commit()
-            msg = 'You have successfully registered\n Login again! !'
-            # return render_template('index.html.html', msg=msg)
-
-
-    elif request.method == 'POST':
-
-        msg = 'Please fill out the form !'
-    return render_template('register.html',msg=msg)
+    except Exception as e:
+        print('Something Unexpected Happened [ Error :' + e + ' ]')
+    finally:
+        cursor.close()
+        conn.close()
 
 
 @app.route('/registerUserByAd', methods=['GET', 'POST'])
@@ -404,51 +423,58 @@ def register_byAd():
 # doctor register
 @app.route('/registerDoctor', methods=['GET', 'POST'])
 def registerDoctor():
-    msg = ''
-    if request.method == 'POST' and 'firstname' in request.form and 'lastname' in request.form and 'age' in request.form and 'email' in request.form and 'password' in request.form and 'gender' in request.form and 'address' in request.form and 'mobNo' in request.form:
-        firstname = request.form['firstname']
-        lastname = request.form['lastname']
-        age = request.form['age']
-        email = request.form['email']
-        password = request.form['password']
-        address = request.form['address']
-        gender = request.form['gender']
-        mobileNo = request.form['mobNo']
+    try:
+        msg = ''
+        if request.method == 'POST' and 'firstname' in request.form and 'lastname' in request.form and 'age' in request.form and 'email' in request.form and 'password' in request.form and 'gender' in request.form and 'address' in request.form and 'mobNo' in request.form:
+            firstname = request.form['firstname']
+            lastname = request.form['lastname']
+            age = request.form['age']
+            email = request.form['email']
+            password = request.form['password']
+            address = request.form['address']
+            gender = request.form['gender']
+            mobileNo = request.form['mobNo']
+
+            conn = mysqldb.connect()
+            cursor = conn.cursor()
+            cursor.execute('SELECT * FROM Doctor WHERE docEmail = %s', (email,))
+            account = cursor.fetchone()
+            if account:
+                msg = 'Account already exists !'
+            elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
+                msg = 'Invalid email address !'
+            elif containsNumber(firstname) or containsNumber(lastname):
+                msg = 'First name and Last name must contain only characters!'
+            elif validate(mobileNo) or len(mobileNo) > 10:
+                # must see the validation here
+                msg = 'Phone Number must contain only 10 numbers!'
+
+            else:
+
+                # do not save password as a plain text
+                _hashed_password = generate_password_hash(password)
+                # save edits
+                sql = "INSERT INTO Doctor(docFirstName  ,docLastName ,docAge  ,docEmail, docPassword, docGender ,docAddress , docMobileNo ) VALUES(%s, %s, %s,%s, %s, %s,%s, %s)"
+                data = (firstname, lastname, age, email, _hashed_password, gender, address, mobileNo,)
+                # conn = mysql.connect()
+                # cursor = conn.cursor()
+                cursor.execute(sql, data)
+                conn.commit()
+                msg = 'You have successfully registered !'
+                # return render_template('index.html.html', msg=msg)
 
 
-        conn = mysqldb.connect()
-        cursor = conn.cursor()
-        cursor.execute('SELECT * FROM Doctor WHERE docEmail = %s', (email,))
-        account = cursor.fetchone()
-        if account:
-            msg = 'Account already exists !'
-        elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
-            msg = 'Invalid email address !'
-        elif containsNumber(firstname) or containsNumber(lastname):
-            msg = 'First name and Last name must contain only characters!'
-        elif validate(mobileNo) or len(mobileNo)>10:
-            # must see the validation here
-            msg = 'Phone Number must contain only 10 numbers!'
+        elif request.method == 'POST':
 
-        else:
+            msg = 'Please fill out the form !'
+        return render_template('doctor-register.html', msg=msg)
 
-            # do not save password as a plain text
-            _hashed_password = generate_password_hash(password)
-            # save edits
-            sql = "INSERT INTO Doctor(docFirstName  ,docLastName ,docAge  ,docEmail, docPassword, docGender ,docAddress , docMobileNo ) VALUES(%s, %s, %s,%s, %s, %s,%s, %s)"
-            data = (firstname, lastname, age,email,_hashed_password, gender, address, mobileNo,)
-            # conn = mysql.connect()
-            # cursor = conn.cursor()
-            cursor.execute(sql, data)
-            conn.commit()
-            msg = 'You have successfully registered !'
-            # return render_template('index.html.html', msg=msg)
+    except Exception as e:
+        print('Something Unexpected Happened [ Error :' + e + ' ]')
 
-
-    elif request.method == 'POST':
-
-        msg = 'Please fill out the form !'
-    return render_template('doctor-register.html', msg=msg)
+    finally:
+        cursor.close()
+        conn.close()
 
 # add appointments
 
@@ -523,9 +549,9 @@ def doctor_search():
                         msg='There is No Doctor Registered From This Email. ('+email+')'
 
             return render_template("doctors.html", account=account,msg=msg)
-        return redirect(url_for('login'))
+        return redirect(url_for('login_new'))
     except Exception as e:
-        print(e)
+        print('Something Unexpected Happened [ Error :' + e + ' ]')
     finally:
         cursor.close()
         conn.close()
@@ -558,9 +584,9 @@ def doctor_remove(email):
             else:
                 msg='Something went wrong while Removing the Doctor Registered from this email ('+email+')'
             return render_template("doctors.html", account=account, msg=msg)
-        return redirect(url_for('login'))
+        return redirect(url_for('login_new'))
     except Exception as e:
-        print(e)
+        print('Something Unexpected Happened [ Error :' + e + ' ]')
     finally:
         cursor.close()
         conn.close()
@@ -594,9 +620,9 @@ def patient_Search():
                         msg='There is No Patient Registered From This Email. ('+email+')'
 
             return render_template("patients.html", account=account,msg=msg)
-        return redirect(url_for('login'))
+        return redirect(url_for('login_new'))
     except Exception as e:
-        print(e)
+        print('Something Unexpected Happened [ Error :' + e + ' ]')
     finally:
         cursor.close()
         conn.close()
@@ -629,9 +655,9 @@ def patient_remove(email):
             else:
                 msg='Something went wrong while Removing the Patient Registered from this email ('+email+')'
             return render_template("patients.html", account=account, msg=msg)
-        return redirect(url_for('login'))
+        return redirect(url_for('login_new'))
     except Exception as e:
-        print(e)
+        print('Something Unexpected Happened [ Error :' + e + ' ]')
     finally:
         cursor.close()
         conn.close()
@@ -640,74 +666,87 @@ def patient_remove(email):
 # prescription display
 @app.route("/displayPress")
 def displayPress():
+    try:
+        if 'loggedin' in session:
+            conn = mysqldb.connect()
+            cursor = conn.cursor()
 
-    if 'loggedin' in session:
-        conn = mysqldb.connect()
-        cursor = conn.cursor()
-
-        # cursor.execute('SELECT * FROM User WHERE id = % s', (session['id'],))
-        # account = cursor.fetchone()
-        cursor.execute('SELECT * FROM Prescription WHERE id = % s', (session['id'],))
-        record = cursor.fetchone()
-        while record is not None:
-
-            storeFilePath = "./static/Prescriptions/userId{0}.img".format(str(session['id'])) + str(record[0]) + ".jpeg"
-            print(record)
-            base64_img_bytes=record[2]
-            # base64_img_bytes = base64_img.encode('utf-8')
-            # with open(storeFilePath, "wb") as File:
-            #     File.write(record[2])
-            #     File.close()
-            with open(storeFilePath, 'wb') as file_to_save:
-                decoded_image_data = base64.decodebytes(base64_img_bytes)
-                file_to_save.write(decoded_image_data)
+            # cursor.execute('SELECT * FROM User WHERE id = % s', (session['id'],))
+            # account = cursor.fetchone()
+            cursor.execute('SELECT * FROM Prescription WHERE id = % s', (session['id'],))
             record = cursor.fetchone()
+            while record is not None:
+                storeFilePath = "./static/Prescriptions/userId{0}.img".format(str(session['id'])) + str(
+                    record[0]) + ".jpeg"
+                print(record)
+                base64_img_bytes = record[2]
+                # base64_img_bytes = base64_img.encode('utf-8')
+                # with open(storeFilePath, "wb") as File:
+                #     File.write(record[2])
+                #     File.close()
+                with open(storeFilePath, 'wb') as file_to_save:
+                    decoded_image_data = base64.decodebytes(base64_img_bytes)
+                    file_to_save.write(decoded_image_data)
+                record = cursor.fetchone()
 
-        #display images
+            # display images
 
-        imageList = os.listdir('./static/Prescriptions')
-        imagelist = ['./Prescriptions/' + image for image in imageList if ("userId{0}".format(str(session['id']))) in image]
+            imageList = os.listdir('./static/Prescriptions')
+            imagelist = ['./Prescriptions/' + image for image in imageList if
+                         ("userId{0}".format(str(session['id']))) in image]
 
-        return render_template("prescription.html",imagelist=imagelist)
+            return render_template("prescription.html", imagelist=imagelist)
 
-    return redirect(url_for('login'))
+        return redirect(url_for('login_new'))
+    except Exception as e:
+        print('Something Unexpected Happened [ Error :' + e + ' ]')
+    finally:
+        cursor.close()
+        conn.close()
 
 # display testReport
 
 # prescription display
 @app.route("/displayTestReport")
 def displayTestReport():
+    try:
+        if 'loggedin' in session:
+            conn = mysqldb.connect()
+            cursor = conn.cursor()
 
-    if 'loggedin' in session:
-        conn = mysqldb.connect()
-        cursor = conn.cursor()
-
-        # cursor.execute('SELECT * FROM User WHERE id = % s', (session['id'],))
-        # account = cursor.fetchone()
-        cursor.execute('SELECT * FROM TestReports WHERE id = % s', (session['id'],))
-        record = cursor.fetchone()
-        while record is not None:
-
-            storeFilePath = "./static/TestReports/userId{0}.img".format(str(session['id'])) + str(record[0]) + ".pdf"
-            print(record)
-            base64_img_bytes=record[2]
-            # base64_img_bytes = base64_img.encode('utf-8')
-            # with open(storeFilePath, "wb") as File:
-            #     File.write(record[2])
-            #     File.close()
-            with open(storeFilePath, 'wb') as file_to_save:
-                decoded_image_data = base64.decodebytes(base64_img_bytes)
-                file_to_save.write(decoded_image_data)
+            # cursor.execute('SELECT * FROM User WHERE id = % s', (session['id'],))
+            # account = cursor.fetchone()
+            cursor.execute('SELECT * FROM TestReports WHERE id = % s', (session['id'],))
             record = cursor.fetchone()
+            while record is not None:
+                storeFilePath = "./static/TestReports/userId{0}.img".format(str(session['id'])) + str(
+                    record[0]) + ".pdf"
+                print(record)
+                base64_img_bytes = record[2]
+                # base64_img_bytes = base64_img.encode('utf-8')
+                # with open(storeFilePath, "wb") as File:
+                #     File.write(record[2])
+                #     File.close()
+                with open(storeFilePath, 'wb') as file_to_save:
+                    decoded_image_data = base64.decodebytes(base64_img_bytes)
+                    file_to_save.write(decoded_image_data)
+                record = cursor.fetchone()
 
-        #display images
+            # display images
 
-        pdfList = os.listdir('TestReports')
-        testReportsList = ['./TestReports/' + image for image in pdfList if ("userId{0}".format(str(session['id']))) in image]
+            pdfList = os.listdir('TestReports')
+            testReportsList = ['./TestReports/' + image for image in pdfList if
+                               ("userId{0}".format(str(session['id']))) in image]
 
-        return render_template("testReport.html",testReportList=testReportsList)
+            return render_template("testReport.html", testReportList=testReportsList)
 
-    return redirect(url_for('login'))
+        return redirect(url_for('login_new'))
+
+    except Exception as e:
+        print('Something Unexpected Happened [ Error :' + e + ' ]')
+    finally:
+        cursor.close()
+        conn.close()
 
 
 #check file extention
@@ -719,43 +758,50 @@ def allowed_file(filename):
 
 @app.route('/addPress', methods=['GET','POST'])
 def addPress():
-    if 'loggedin' in session:
-        msg = ''
+    try:
+        if 'loggedin' in session:
+            msg = ''
 
-        if request.method == 'POST':
-            if 'image' not in request.files:
-                msg='No file input'
-                return render_template("prescription.html", msg=msg)
-            file = request.files['image']
-            # if user does not select file, browser also
-            # submit an empty part without filename
-            if file.filename == '':
-                flash('No selected file')
-                return redirect(request.url)
-            if file and allowed_file(file.filename):
-                file.filename="img"+str(session['id'])+".jpeg"
-                # filename = secure_filename(file.filename)
-                file_location=os.path.join(UPLOAD_FOLDER_PRESS, file.filename)
-                file.save(file_location)
+            if request.method == 'POST':
+                if 'image' not in request.files:
+                    msg = 'No file input'
+                    return render_template("prescription.html", msg=msg)
+                file = request.files['image']
+                # if user does not select file, browser also
+                # submit an empty part without filename
+                if file.filename == '':
+                    flash('No selected file')
+                    return redirect(request.url)
+                if file and allowed_file(file.filename):
+                    file.filename = "img" + str(session['id']) + ".jpeg"
+                    # filename = secure_filename(file.filename)
+                    file_location = os.path.join(UPLOAD_FOLDER_PRESS, file.filename)
+                    file.save(file_location)
 
-                # newFile = open(file_location, 'rb').read()
-                # We must encode the file to get base64 string
-                with open(file_location,'rb') as binary_file:
-                    binary_file_data = binary_file.read()
-                    base64_encoded_data = base64.b64encode(binary_file_data)
-                    uploadFile = base64_encoded_data.decode('utf-8')
+                    # newFile = open(file_location, 'rb').read()
+                    # We must encode the file to get base64 string
+                    with open(file_location, 'rb') as binary_file:
+                        binary_file_data = binary_file.read()
+                        base64_encoded_data = base64.b64encode(binary_file_data)
+                        uploadFile = base64_encoded_data.decode('utf-8')
 
-                    # uploadFile = base64.b64encode(newFile)
-                    # _binaryFile = insertBLOB(file)
-                sql = "INSERT INTO Prescription(id,prescription) VALUES(%s ,%s)"
-                data = ((session['id']), uploadFile,)
-                conn = mysqldb.connect()
-                cursor = conn.cursor()
-                cursor.execute(sql, data)
-                conn.commit()
-        # return render_template("prescription.html",msg=msg)
-        return redirect(url_for('displayPress'))
-    return redirect(url_for('login'))
+                        # uploadFile = base64.b64encode(newFile)
+                        # _binaryFile = insertBLOB(file)
+                    sql = "INSERT INTO Prescription(id,prescription) VALUES(%s ,%s)"
+                    data = ((session['id']), uploadFile,)
+                    conn = mysqldb.connect()
+                    cursor = conn.cursor()
+                    cursor.execute(sql, data)
+                    conn.commit()
+            # return render_template("prescription.html",msg=msg)
+            return redirect(url_for('displayPress'))
+        return redirect(url_for('login_new'))
+
+    except Exception as e:
+        print('Something Unexpected Happened [ Error :' + e + ' ]')
+    finally:
+        cursor.close()
+        conn.close()
 
 
 #  add test report
@@ -764,43 +810,52 @@ def addPress():
 
 @app.route('/addTestReport', methods=['GET','POST'])
 def addTestReport():
-    if 'loggedin' in session:
-        msg = ''
+    try:
+        if 'loggedin' in session:
+            msg = ''
 
-        if request.method == 'POST':
-            if 'image' not in request.files:
-                msg='No file input'
-                return render_template("testReport.html", msg=msg)
-            file = request.files['testReport']
-            # if user does not select file, browser also
-            # submit an empty part without filename
-            if file.filename == '':
-                flash('No selected file')
-                return redirect(request.url)
-            if file and allowed_file(file.filename):
-                file.filename="TestReport"+str(session['id'])+".pdf"
-                # filename = secure_filename(file.filename)
-                file_location=os.path.join(UPLOAD_FOLDER_TEST, file.filename)
-                file.save(file_location)
+            if request.method == 'POST':
+                if 'image' not in request.files:
+                    msg = 'No file input'
+                    return render_template("testReport.html", msg=msg)
+                file = request.files['testReport']
+                # if user does not select file, browser also
+                # submit an empty part without filename
+                if file.filename == '':
+                    flash('No selected file')
+                    return redirect(request.url)
+                if file and allowed_file(file.filename):
+                    file.filename = "TestReport" + str(session['id']) + ".pdf"
+                    # filename = secure_filename(file.filename)
+                    file_location = os.path.join(UPLOAD_FOLDER_TEST, file.filename)
+                    file.save(file_location)
 
-                # newFile = open(file_location, 'rb').read()
-                # We must encode the file to get base64 string
-                with open(file_location,'rb') as binary_file:
-                    binary_file_data = binary_file.read()
-                    base64_encoded_data = base64.b64encode(binary_file_data)
-                    uploadFile = base64_encoded_data.decode('utf-8')
+                    # newFile = open(file_location, 'rb').read()
+                    # We must encode the file to get base64 string
+                    with open(file_location, 'rb') as binary_file:
+                        binary_file_data = binary_file.read()
+                        base64_encoded_data = base64.b64encode(binary_file_data)
+                        uploadFile = base64_encoded_data.decode('utf-8')
 
-                    # uploadFile = base64.b64encode(newFile)
-                    # _binaryFile = insertBLOB(file)
-                sql = "INSERT INTO TestReports(id,testReports) VALUES(%s ,%s)"
-                data = ((session['id']), uploadFile,)
-                conn = mysqldb.connect()
-                cursor = conn.cursor()
-                cursor.execute(sql, data)
-                conn.commit()
-        # return render_template("prescription.html",msg=msg)
-        return redirect(url_for('displayPress'))
-    return redirect(url_for('login'))
+                        # uploadFile = base64.b64encode(newFile)
+                        # _binaryFile = insertBLOB(file)
+                    sql = "INSERT INTO TestReports(id,testReports) VALUES(%s ,%s)"
+                    data = ((session['id']), uploadFile,)
+                    conn = mysqldb.connect()
+                    cursor = conn.cursor()
+                    cursor.execute(sql, data)
+                    conn.commit()
+            # return render_template("prescription.html",msg=msg)
+            return redirect(url_for('displayPress'))
+        return redirect(url_for('login_new'))
+
+    except Exception as e:
+
+        print('Something Unexpected Happened [ Error :' + e + ' ]')
+    finally:
+        cursor.close()
+        conn.close()
+
 
 @app.route('/main', methods=['GET','POST'])
 def main():
@@ -816,173 +871,224 @@ def adminDashboard():
 # profile display
 @app.route("/display")
 def displayProfile():
-    if 'loggedin' in session:
-        conn = mysqldb.connect()
-        cursor = conn.cursor()
-        cursor.execute('SELECT * FROM User WHERE id = % s', (session['id'],))
-        account = cursor.fetchone()
-        return render_template("profile.html", tab=0, account=account)
-    return redirect(url_for('login'))
+    try:
+        if 'loggedin' in session:
+            conn = mysqldb.connect()
+            cursor = conn.cursor()
+            cursor.execute('SELECT * FROM User WHERE id = % s', (session['id'],))
+            account = cursor.fetchone()
+            return render_template("profile.html", tab=0, account=account)
+        return redirect(url_for('login_new'))
+
+    except Exception as e:
+        print('Something Unexpected Happened [ Error :' + e + ' ]')
+    finally:
+        cursor.close()
+        conn.close()
 
 # update profile
 @app.route("/updateUser", methods=['GET', 'POST'])
 def updateUser():
-    msg = ''
-    if 'loggedin' in session:
-        conn = mysqldb.connect()
-        cursor = conn.cursor()
-        cursor.execute('SELECT * FROM User WHERE id = % s', (session['id'],))
-        account = cursor.fetchone()
-        if request.method == 'POST' and 'firstname' in request.form or 'lastname' in request.form or 'age' in request.form or 'address' in request.form or 'mobNo' in request.form:
-            firstname = request.form['firstname']
-            lastname = request.form['lastname']
-            age = request.form['age']
-            address = request.form['address']
-            mobileNo = request.form['mobNo']
-            if containsNumber(firstname) or containsNumber(lastname):
-                msg = 'First name and Last name must contain only characters!'
-            elif validate(age) or len(age)>3:
-                msg="Inser Age Correctly"
-            elif validate(mobileNo) or (len(mobileNo) > 10 or len(mobileNo) < 10):
-                # must see the validation here
-                msg = 'Phone Number must contain only 10 numbers!'
-            else:
+    try:
+        msg = ''
+        if 'loggedin' in session:
+            conn = mysqldb.connect()
+            cursor = conn.cursor()
+            cursor.execute('SELECT * FROM User WHERE id = % s', (session['id'],))
+            account = cursor.fetchone()
+            if request.method == 'POST' and 'firstname' in request.form or 'lastname' in request.form or 'age' in request.form or 'address' in request.form or 'mobNo' in request.form:
+                firstname = request.form['firstname']
+                lastname = request.form['lastname']
+                age = request.form['age']
+                address = request.form['address']
+                mobileNo = request.form['mobNo']
+                if containsNumber(firstname) or containsNumber(lastname):
+                    msg = 'First name and Last name must contain only characters!'
+                elif validate(age) or len(age) > 3:
+                    msg = "Inser Age Correctly"
+                elif validate(mobileNo) or (len(mobileNo) > 10 or len(mobileNo) < 10):
+                    # must see the validation here
+                    msg = 'Phone Number must contain only 10 numbers!'
+                else:
 
-                sql='UPDATE User SET  firstName =% s, lastName =% s, age =% s, address =% s, mobileNo =% s WHERE id =%s '
-                data=(firstname,lastname, age, address, mobileNo,(session['id'],),)
-                cursor.execute(sql, data)
-                conn.commit()
-                msg = 'You have successfully updated !'
-                cursor.execute('SELECT * FROM User WHERE id = % s', (session['id'],))
-                account = cursor.fetchone()
-        elif request.method == 'POST':
-            msg = 'Please fill out the form !'
-        return render_template('profile.html', tab=1 ,account=account,msg=msg)
-        # return redirect(url_for('display',msg=msg))
-    return redirect(url_for('login'))
+                    sql = 'UPDATE User SET  firstName =% s, lastName =% s, age =% s, address =% s, mobileNo =% s WHERE id =%s '
+                    data = (firstname, lastname, age, address, mobileNo, (session['id'],),)
+                    cursor.execute(sql, data)
+                    conn.commit()
+                    msg = 'You have successfully updated !'
+                    cursor.execute('SELECT * FROM User WHERE id = % s', (session['id'],))
+                    account = cursor.fetchone()
+            elif request.method == 'POST':
+                msg = 'Please fill out the form !'
+            return render_template('profile.html', tab=1, account=account, msg=msg)
+            # return redirect(url_for('display',msg=msg))
+        return redirect(url_for('login_new'))
+    except Exception as e:
+        print('Something Unexpected Happened [ Error :' + e + ' ]')
+    finally:
+        cursor.close()
+        conn.close()
 
 # update password
 @app.route("/updatePassword", methods=['GET', 'POST'])
 def updatePassword():
-    msg = ''
-    if 'loggedin' in session:
-        conn = mysqldb.connect()
-        cursor = conn.cursor()
-        cursor.execute('SELECT * FROM User WHERE id = % s', (session['id'],))
-        account = cursor.fetchone()
-        if request.method == 'POST' and 'email' in request.form and 'oldPass' in request.form and 'newPass' in request.form and 'finalPass' in request.form:
-            email = request.form['email']
-            oldPass = request.form['oldPass']
-            newPass = request.form['newPass']
-            finalPass = request.form['finalPass']
-            if(session['username']==email):
-                conn = mysqldb.connect()
-                cursor = conn.cursor()
-                cursor.execute('SELECT * FROM User WHERE email = %s ', (session['username']))
-                account = cursor.fetchone()
-                if account:
-                    check = check_password_hash(account[5], oldPass)
-                    if check:
-                        if(newPass==finalPass):
-                            _hashed_password = generate_password_hash(newPass)
-                            sql='UPDATE User SET  password =% s WHERE id =%s '
-                            data=(_hashed_password,(session['id'],),)
-                            cursor.execute(sql, data)
-                            conn.commit()
-                            msg = 'You have successfully updated Password !'
+    try:
+        msg = ''
+        if 'loggedin' in session:
+            conn = mysqldb.connect()
+            cursor = conn.cursor()
+            cursor.execute('SELECT * FROM User WHERE id = % s', (session['id'],))
+            account = cursor.fetchone()
+            if request.method == 'POST' and 'email' in request.form and 'oldPass' in request.form and 'newPass' in request.form and 'finalPass' in request.form:
+                email = request.form['email']
+                oldPass = request.form['oldPass']
+                newPass = request.form['newPass']
+                finalPass = request.form['finalPass']
+                if (session['username'] == email):
+                    conn = mysqldb.connect()
+                    cursor = conn.cursor()
+                    cursor.execute('SELECT * FROM User WHERE email = %s ', (session['username']))
+                    account = cursor.fetchone()
+                    if account:
+                        check = check_password_hash(account[5], oldPass)
+                        if check:
+                            if (newPass == finalPass):
+                                _hashed_password = generate_password_hash(newPass)
+                                sql = 'UPDATE User SET  password =% s WHERE id =%s '
+                                data = (_hashed_password, (session['id'],),)
+                                cursor.execute(sql, data)
+                                conn.commit()
+                                msg = 'You have successfully updated Password !'
+                            else:
+                                msg = 'Re-Enter new Password Correctly'
                         else:
-                            msg='Re-Enter new Password Correctly'
-                    else:
-                        msg='Incorrect Password'
-            else:
-                msg='Enter your email correctly'
-        elif request.method == 'POST':
-            msg = 'Please fill out the form !'
-        return render_template('profile.html',tab=2,account=account,msg=msg)
-    return redirect(url_for('login'))
+                            msg = 'Incorrect Password'
+                else:
+                    msg = 'Enter your email correctly'
+            elif request.method == 'POST':
+                msg = 'Please fill out the form !'
+            return render_template('profile.html', tab=2, account=account, msg=msg)
+        return redirect(url_for('login_new'))
+
+    except Exception as e:
+        print('Something Unexpected Happened [ Error :' + e + ' ]')
+    finally:
+        cursor.close()
+        conn.close()
 
 # display channeling and delete channeling
 @app.route('/Channelling', methods=['POST','GET'])
 def channelling():
-    if 'loggedin' in session:
+    try:
+        if 'loggedin' in session:
 
-        msg = ''
-        conn = mysqldb.connect()
-        cursor = conn.cursor()
-        cursor.execute('SELECT * FROM User WHERE id = % s', (session['id'],))
-        account = cursor.fetchone()
-
-        if request.method == 'POST' and 'channelId' in request.form:
-            channelId = request.form['channelId']
+            msgChan = ''
             conn = mysqldb.connect()
             cursor = conn.cursor()
-            cursor.execute('DELETE FROM Channelling WHERE channelId=%s',channelId)
-            conn.commit()
-            msg='Channel number '+channelId+' deleted successfully'
+            cursor.execute('SELECT * FROM User WHERE id = % s', (session['id'],))
+            account = cursor.fetchone()
 
-        cursor.execute('SELECT c.name, c.channelId As id, c.channel_date As date, c.status as status, d.docFirstName as fname, d.docLastName As last,dt.timeStart As start FROM Channelling c JOIN Doctor d ON c.doctorId=d.docId JOIN DoctorTimeSlots dt ON d. docId=dt.doctorId WHERE id = % s', (session['id'],))
-        record = cursor.fetchall()
-        return render_template("profile.html",tab=3, account=account,record=record,msg=msg)
-    return redirect(url_for('login'))
+            if request.method == 'POST' and 'channelId' in request.form:
+                channelId = request.form['channelId']
+                conn = mysqldb.connect()
+                cursor = conn.cursor()
+                cursor.execute('DELETE FROM Channelling WHERE channelId=%s', channelId)
+                conn.commit()
+                msg = 'Channel number ' + channelId + ' deleted successfully'
+
+            cursor.execute(
+                'SELECT c.name, c.channelId As id, c.channel_date As date, c.status as status, d.docFirstName as fname, d.docLastName As last,dt.timeStart As start FROM Channelling c JOIN Doctor d ON c.doctorId=d.docId JOIN DoctorTimeSlots dt ON d. docId=dt.doctorId WHERE id = % s',
+                (session['id'],))
+            record = cursor.fetchall()
+            return render_template("profile.html", tab=3, account=account, record=record, msg=msgChan)
+        return redirect(url_for('login_new'))
+
+    except Exception as e:
+        print('Something Unexpected Happened [ Error :' + e + ' ]')
+    finally:
+        cursor.close()
+        conn.close()
 
 # testChanneling
 
 @app.route('/addChannel', methods=['GET','POST'])
 def add_channel():
-    appNumArray=[]
-    if 'loggedin' in session:
-        appointmentNumber=0
-        conn = mysqldb.connect()
-        cursor = conn.cursor()
-        finalList = []
-        if request.method == 'POST' and 'appointment' in request.form:
-            appointmentNumber = request.form.get('appNum')
-            if(appointmentNumber is None):
-
-                appointment = request.form['appointment']
-                year,month, day = (int(x) for x in appointment.split('-'))
-                ans = date(year, month, day)
-                weekday=ans.strftime("%A")
-                cursor.execute('SELECT dt.doctorId AS docID, dt.day AS day, dt.timeStart AS start, dt.timeEnd AS end, d.docFirstName AS firstName, d.docLastName AS lastName FROM DoctorTimeSlots dt JOIN Doctor d ON dt.doctorId = d.docId WHERE day = % s',(weekday) )
-                doctorList = cursor.fetchall()
-
-                for doc in doctorList:
-                    doctorListAppointment = list(doctorList)
-                    cursor.execute('SELECT channel_time, channel_date doctorId FROM Channelling WHERE channel_date=%s AND doctorId=%s',(appointment, doc[0]))
-                    totApp = cursor.fetchone()
-                    if (totApp is None):
-                        appointmentNumber = 1
-                    else:
-                        appointmentNumber = len(totApp) + 1
-                    docList=list(doc)
-                    docList.append(str(appointmentNumber))
-                    doc=tuple(docList)
-
-                    finalList.append(doc)
-                    print(finalList)
-                    print(type(finalList))
-                finalList=tuple(finalList)
-                print(finalList)
-                print(type(finalList))
-                return render_template("Channelling.html", doctorList=finalList,appNumArray=appNumArray,range=range)
-
-            elif request.method == 'POST' and 'name' in request.form and 'email' in request.form and 'appNum' in request.form and 'mobNo' in request.form and 'appointment' in request.form and 'status' in request.form or 'message' in request.form:
-                name=request.form['name']
+    try:
+        appNumArray = []
+        if 'loggedin' in session:
+            msgChan = ''
+            conn = mysqldb.connect()
+            cursor = conn.cursor()
+            finalList = []
+            if request.method == 'POST' and 'appointment' in request.form:
+                appointmentNumber = request.form.get('appNum')
+                name = request.form['name']
                 email = request.form['email']
                 mobNo = request.form['mobNo']
-                confirmDate = request.form['appointment']
-                doctorId = request.form['doctorId']
-                status = 'Pending'
-                msg = request.form['message']
-                sql = "INSERT INTO Chnnelling(id,name,channel_date ,channel_time , doctorId , status,message) VALUES(%s, %s, %s,%s, %s,%s)"
-                data = ((session['id']), name, confirmDate, appointmentNumber, doctorId, status,msg,)
 
-                cursor.execute(sql, data)
-                conn.commit()
+                if not re.match(r'[^@]+@[^@]+\.[^@]+', email):
+                    msg = 'Invalid email address !'
+                elif containsNumber(name):
+                    msg = 'Name must contain only characters!'
+                elif validate(mobNo) or len(mobNo) > 10:
+                    # must see the validation here
+                    msg = 'Phone Number must contain only 10 numbers!'
 
+                if (request.form.get('button') == 'checkOption'):
+                    appointment = request.form['appointment']
 
-        return render_template("Channeling.html",)
-    return redirect(url_for('login'))
+                    year, month, day = (int(x) for x in appointment.split('-'))
+                    ans = date(year, month, day)
+                    weekday = ans.strftime("%A")
+                    cursor.execute(
+                        'SELECT dt.doctorId AS docID, dt.day AS day, dt.timeStart AS start, dt.timeEnd AS end, d.docFirstName AS firstName, d.docLastName AS lastName FROM DoctorTimeSlots dt JOIN Doctor d ON dt.doctorId = d.docId WHERE day = % s',
+                        (weekday))
+                    doctorList = cursor.fetchall()
+
+                    for doc in doctorList:
+                        doctorListAppointment = list(doctorList)
+                        cursor.execute(
+                            'SELECT channel_time, channel_date doctorId FROM Channelling WHERE channel_date=%s AND doctorId=%s',
+                            (appointment, doc[0]))
+                        totApp = cursor.fetchall()
+                        if (totApp is None):
+                            appointmentNumber = 1
+                        else:
+                            appointmentNumber = len(totApp) + 1
+                        docList = list(doc)
+                        docList.append(str(appointmentNumber))
+                        doc = tuple(docList)
+
+                        finalList.append(doc)
+
+                    finalList = tuple(finalList)
+
+                    return render_template("Channelling.html", doctorList=finalList, appNumArray=appNumArray, name=name,
+                                           appointment=appointment, email=email, mobNo=mobNo, msg=msgChan)
+
+                elif request.method == 'POST' and 'name' in request.form and 'email' in request.form and 'appNum' in request.form and 'mobNo' in request.form and 'appointment' in request.form and 'status' in request.form or 'message' in request.form:
+
+                    confirmDate = request.form['appointment']
+                    data = request.form['doctorId']
+                    doctorId, appointmentNumber = (int(x) for x in data.split(':'))
+                    status = 'Pending'
+                    msg = request.form['message']
+
+                    sql = "INSERT INTO Channelling(id,name,channel_date ,channel_time , doctorId , status,message) VALUES(%s, %s, %s,%s, %s,%s,%s)"
+                    data = ((session['id']), name, confirmDate, appointmentNumber, doctorId, status, msg,)
+
+                    cursor.execute(sql, data)
+                    conn.commit()
+                    msgChan = "Successfully Added The Appointment!"
+
+            return render_template("Channelling.html", msg=msgChan)
+        return redirect(url_for('login_new'))
+
+    except Exception as e:
+        print('Something Unexpected Happened [ Error :' + e + ' ]')
+    finally:
+        cursor.close()
+        conn.close()
 
 
 def containsNumber(value):
