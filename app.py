@@ -1066,6 +1066,79 @@ def add_channel():
     except Exception as e:
         print(e)
 
+# update password
+@app.route("/updateChanStatus", methods=['GET', 'POST'])
+def updateChanStatus():
+    try:
+        msg = ''
+        if 'loggedin' in session:
+
+            conn = mysqldb.connect()
+            cursor = conn.cursor()
+            if request.method == 'POST' and 'email' in request.form and 'status' in request.form and 'chanId' in request.form:
+                email = request.form['email']
+                status = upper(request.form['status'])
+                chanId = request.form['chanId']
+                cursor.execute('SELECT id FROM USER WHERE email=%s',(email,))
+                account=cursor.fetchone
+                if account:
+                    cursor.execute('SELECT * FROM Channelling WHERE channelId=%s AND status NOT LIKE %"COMPLETED"%' (chanId))
+                    available=cursor.fetchone
+                    if available:
+                        if status=='COMPLETED'or status=='EXPIRED':
+                            sql = 'UPDATE Channelling SET  status =% s WHERE channelId =%s '
+                            data = (status, chanId,)
+                            cursor.execute(sql, data)
+                            conn.commit()
+                            msg = 'Successfully updated Status !'
+                        else:
+                            msg = 'Check the status again'
+                    else:
+                        msg = 'There is no Ongoing Records from this Channel Id'
+                else:
+                    msg = 'There is no User registered from this email'
+            elif request.method == 'POST':
+                msg = 'Please fill out the form !'
+            return render_template('statusUpdate.html',msg=msg)
+        return redirect(url_for('login_new'))
+
+    except Exception as e:
+        print(e)
+
+# add doctor time slots
+
+# register user
+@app.route('/docTime', methods=['GET', 'POST'])
+def docTime():
+    try:
+        msg = ''
+        if request.method == 'POST' and 'day' in request.form and 'docId' in request.form and 'timeStart' in request.form and 'timeEnd' in request.form :
+            day = request.form['day'].title()
+            docId = request.form['docId']
+            timeStart = request.form['timeStart']
+            timeEnd = request.form['timeEnd']
+
+            conn = mysqldb.connect()
+            cursor = conn.cursor()
+            cursor.execute('SELECT * FROM Doctor WHERE docId = %s', (docId,))
+            account = cursor.fetchone()
+            if account:
+                # save edits
+                sql = "INSERT INTO DoctorTimeSlots(docotrId,day,timeStart,timeEnd) VALUES(%s, %s, %s,%s)"
+                data = (docId,day,timeStart,timeEnd)
+                cursor.execute(sql, data)
+                conn.commit()
+                msg = 'Successfully recorded!'
+                # return render_template('index.html.html', msg=msg)
+
+
+        elif request.method == 'POST':
+
+            msg = 'Please fill out the form !'
+        return render_template('docTime.html', msg=msg)
+
+    except Exception as e:
+        print(e)
 
 def containsNumber(value):
     for character in value:
