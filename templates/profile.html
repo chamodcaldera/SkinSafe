@@ -146,7 +146,7 @@ body, html {
                     <table>
                         <tr>
                             <td class="tdata">
-							    <a href="{{ url_for('main') }}" onclick="toggle()"><button class="btn">Cancel</button></a>
+							    <a href="{{ url_for('main') }}" onclick="toggle()"><button class="btn" name="button" value="cancel">Cancel</button></a>
                             </td>
                             <td class="tdata">
                                 <button  type="submit" class="btn">Update</button>
@@ -178,7 +178,7 @@ body, html {
                     <table>
                         <tr>
                             <td class="tdata">
-							    <a href="{{ url_for('main') }}" onclick="toggle()" ><button class="btn">Cancel</button></a>
+							    <a href="{{ url_for('main') }}" onclick="toggle()" ><button class="btn" name="button" value="cancel">Cancel</button></a>
                             </td>
                             <td class="tdata">
                                 <button  type="submit" class="btn">Update</button>
@@ -229,6 +229,11 @@ body, html {
                                         <td>{{ record[3] }}</td>
 
                                     </tr>
+                                     <tr>
+                                        <td>Channelling No : </td>
+                                        <td>{{ record[7] }}</td>
+
+                                    </tr>
                                     <tr>
 
                                          <td><button type="submit" class="btn" value="{{ record[1] }}" name="channelId" onclick="{{ url_for('channelling') }} ">DELETE</button></td>
@@ -245,7 +250,7 @@ body, html {
                     <table>
                     <tr>
                         <td class="tdata">
-							<a href="{{ url_for('main') }}" onclick="toggle()"><button class="btn">Cancel</button></a>
+							<a href="{{ url_for('main') }}" onclick="toggle()"><button class="btn" name="button" value="cancel">Cancel</button></a>
                         </td>
                         <td class="tdata">
                             <button class="btn" type="submit">REFRESH</button>

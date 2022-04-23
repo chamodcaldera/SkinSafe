@@ -1,6 +1,7 @@
 import base64
 import secrets
 from datetime import date
+from dateutil import parser
 import keras
 from flask import Flask, request, render_template, flash, redirect, jsonify, url_for
 import cv2
@@ -200,9 +201,22 @@ def docD():
 def presPg():
     return render_template("prescription.html")
 
+@app.route('/adminDashboard',methods=['Get','POST'])
+def adminDashboardRedirect():
+    if 'loggedin' in session:
 
+        conn = mysqldb.connect()
+        cursor = conn.cursor()
+        cursor.execute('SELECT COUNT(*) FROM Doctor')
+        noDoc=cursor.fetchone()[0]
+        cursor.execute('SELECT COUNT(*) FROM User')
+        noPat = cursor.fetchone()[0]
+        cursor.execute('SELECT COUNT(*) FROM Channelling WHERE status LIKE "%Pending%"')
+        noApp = cursor.fetchone()[0]
+        cursor.execute('SELECT COUNT(*) FROM Channelling')
+        totApp = cursor.fetchone()[0]
 
-
+        return render_template('admindashboard.html',noDoc=noDoc,noPat=noPat,noApp=noApp,totApp=totApp)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login_new():
@@ -223,7 +237,7 @@ def login_new():
                         session['id'] = account[0]
                         session['username'] = account[3]
                         msg = 'Logged in successfully !'
-                        return render_template('admindashboard.html')
+                        return redirect(url_for('adminDashboardRedirect'))
                     else:
                         msg = 'Incorrect username / password !'
 
@@ -249,10 +263,7 @@ def login_new():
         return render_template('login.html', msg=msg)
 
     except Exception as e:
-        print('Something Unexpected Happened [ Error :'+ e +' ]')
-    finally:
-        cursor.close()
-        conn.close()
+        print(e)
 
 
 #user Logout
@@ -274,8 +285,7 @@ def logout():
         session.pop('username', None)
         return render_template("home.html")
     except Exception as e:
-        print('Something Unexpected Happened [ Error :' + e + ' ]')
-
+        print(e)
 
 # @app.route('/loginAdmin', methods=['GET', 'POST'])
 # def login_admin():
@@ -364,10 +374,7 @@ def register():
         return render_template('register.html', msg=msg)
 
     except Exception as e:
-        print('Something Unexpected Happened [ Error :' + e + ' ]')
-    finally:
-        cursor.close()
-        conn.close()
+        print(e)
 
 
 @app.route('/registerUserByAd', methods=['GET', 'POST'])
@@ -470,11 +477,8 @@ def registerDoctor():
         return render_template('doctor-register.html', msg=msg)
 
     except Exception as e:
-        print('Something Unexpected Happened [ Error :' + e + ' ]')
+        print(e)
 
-    finally:
-        cursor.close()
-        conn.close()
 
 # add appointments
 
@@ -551,10 +555,7 @@ def doctor_search():
             return render_template("doctors.html", account=account,msg=msg)
         return redirect(url_for('login_new'))
     except Exception as e:
-        print('Something Unexpected Happened [ Error :' + e + ' ]')
-    finally:
-        cursor.close()
-        conn.close()
+        print(e)
 
     # display selected doctor
 
@@ -586,10 +587,7 @@ def doctor_remove(email):
             return render_template("doctors.html", account=account, msg=msg)
         return redirect(url_for('login_new'))
     except Exception as e:
-        print('Something Unexpected Happened [ Error :' + e + ' ]')
-    finally:
-        cursor.close()
-        conn.close()
+        print(e)
 
 
 # patient database management
@@ -622,10 +620,7 @@ def patient_Search():
             return render_template("patients.html", account=account,msg=msg)
         return redirect(url_for('login_new'))
     except Exception as e:
-        print('Something Unexpected Happened [ Error :' + e + ' ]')
-    finally:
-        cursor.close()
-        conn.close()
+        print(e)
 
     # display selected doctor
 
@@ -657,10 +652,7 @@ def patient_remove(email):
             return render_template("patients.html", account=account, msg=msg)
         return redirect(url_for('login_new'))
     except Exception as e:
-        print('Something Unexpected Happened [ Error :' + e + ' ]')
-    finally:
-        cursor.close()
-        conn.close()
+        print(e)
 
 
 # prescription display
@@ -699,10 +691,7 @@ def displayPress():
 
         return redirect(url_for('login_new'))
     except Exception as e:
-        print('Something Unexpected Happened [ Error :' + e + ' ]')
-    finally:
-        cursor.close()
-        conn.close()
+        print(e)
 
 # display testReport
 
@@ -743,10 +732,7 @@ def displayTestReport():
         return redirect(url_for('login_new'))
 
     except Exception as e:
-        print('Something Unexpected Happened [ Error :' + e + ' ]')
-    finally:
-        cursor.close()
-        conn.close()
+        print(e)
 
 
 #check file extention
@@ -798,10 +784,7 @@ def addPress():
         return redirect(url_for('login_new'))
 
     except Exception as e:
-        print('Something Unexpected Happened [ Error :' + e + ' ]')
-    finally:
-        cursor.close()
-        conn.close()
+        print(e)
 
 
 #  add test report
@@ -851,10 +834,7 @@ def addTestReport():
 
     except Exception as e:
 
-        print('Something Unexpected Happened [ Error :' + e + ' ]')
-    finally:
-        cursor.close()
-        conn.close()
+        print(e)
 
 
 @app.route('/main', methods=['GET','POST'])
@@ -881,10 +861,7 @@ def displayProfile():
         return redirect(url_for('login_new'))
 
     except Exception as e:
-        print('Something Unexpected Happened [ Error :' + e + ' ]')
-    finally:
-        cursor.close()
-        conn.close()
+        print(e)
 
 # update profile
 @app.route("/updateUser", methods=['GET', 'POST'])
@@ -892,6 +869,8 @@ def updateUser():
     try:
         msg = ''
         if 'loggedin' in session:
+            if(request.form.get('button')=='cancel'):
+                return redirect('main')
             conn = mysqldb.connect()
             cursor = conn.cursor()
             cursor.execute('SELECT * FROM User WHERE id = % s', (session['id'],))
@@ -924,10 +903,7 @@ def updateUser():
             # return redirect(url_for('display',msg=msg))
         return redirect(url_for('login_new'))
     except Exception as e:
-        print('Something Unexpected Happened [ Error :' + e + ' ]')
-    finally:
-        cursor.close()
-        conn.close()
+        print(e)
 
 # update password
 @app.route("/updatePassword", methods=['GET', 'POST'])
@@ -935,6 +911,8 @@ def updatePassword():
     try:
         msg = ''
         if 'loggedin' in session:
+            if (request.form.get('button') == 'cancel'):
+                return redirect('main')
             conn = mysqldb.connect()
             cursor = conn.cursor()
             cursor.execute('SELECT * FROM User WHERE id = % s', (session['id'],))
@@ -971,10 +949,8 @@ def updatePassword():
         return redirect(url_for('login_new'))
 
     except Exception as e:
-        print('Something Unexpected Happened [ Error :' + e + ' ]')
-    finally:
-        cursor.close()
-        conn.close()
+        print(e)
+
 
 # display channeling and delete channeling
 @app.route('/Channelling', methods=['POST','GET'])
@@ -985,6 +961,8 @@ def channelling():
             msgChan = ''
             conn = mysqldb.connect()
             cursor = conn.cursor()
+            if (request.form.get('button') == 'cancel'):
+                return redirect('main')
             cursor.execute('SELECT * FROM User WHERE id = % s', (session['id'],))
             account = cursor.fetchone()
 
@@ -997,17 +975,14 @@ def channelling():
                 msg = 'Channel number ' + channelId + ' deleted successfully'
 
             cursor.execute(
-                'SELECT c.name, c.channelId As id, c.channel_date As date, c.status as status, d.docFirstName as fname, d.docLastName As last,dt.timeStart As start FROM Channelling c JOIN Doctor d ON c.doctorId=d.docId JOIN DoctorTimeSlots dt ON d. docId=dt.doctorId WHERE id = % s',
+                'SELECT c.name as name, c.channelId As id, c.channel_date As date,  c.status as status, d.docFirstName as fname, d.docLastName As last,dt.timeStart As start, c.channel_time As num FROM Channelling c JOIN Doctor d ON c.doctorId=d.docId JOIN DoctorTimeSlots dt ON d. docId=dt.doctorId WHERE id = % s',
                 (session['id'],))
             record = cursor.fetchall()
             return render_template("profile.html", tab=3, account=account, record=record, msg=msgChan)
         return redirect(url_for('login_new'))
 
     except Exception as e:
-        print('Something Unexpected Happened [ Error :' + e + ' ]')
-    finally:
-        cursor.close()
-        conn.close()
+        print(e)
 
 # testChanneling
 
@@ -1036,6 +1011,10 @@ def add_channel():
 
                 if (request.form.get('button') == 'checkOption'):
                     appointment = request.form['appointment']
+                    CurrentDate = datetime.now().date()
+                    ExpectedDate = parser.parse(appointment).date()
+                    if CurrentDate > ExpectedDate:
+                        msgChan='Invalid Date! Please Select Valid Date'
 
                     year, month, day = (int(x) for x in appointment.split('-'))
                     ans = date(year, month, day)
@@ -1085,10 +1064,7 @@ def add_channel():
         return redirect(url_for('login_new'))
 
     except Exception as e:
-        print('Something Unexpected Happened [ Error :' + e + ' ]')
-    finally:
-        cursor.close()
-        conn.close()
+        print(e)
 
 
 def containsNumber(value):
