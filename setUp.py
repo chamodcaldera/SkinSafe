@@ -6,11 +6,11 @@ import pymysql
 def connection():
     # mysqldb=mysql.connector.connect(host="database-skinsafe.cfjzzf8ivqho.us-east-1.rds.amazonaws.com",user="chamma",password="skinsafe")#established connection
     mysqldb = pymysql.connect(
-        host='database-skinsafe.cfjzzf8ivqho.us-east-1.rds.amazonaws.com',
+        host='database-1.cfjzzf8ivqho.us-east-1.rds.amazonaws.com',
         port=3306,
-        user='chamma',
-        password='skinsafe',
-        db='SkinSafe',
+        user='admin',
+        password='MC12345678',
+        db='database-1',
 
     )
     mycursor=mysqldb.cursor()#cursor() method create a cursor object

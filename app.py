@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 from PIL.ImageOps import crop
 from matplotlib import pyplot as plt
+from numpy.core.defchararray import upper
 from pyasn1.compat.octets import null
 from tensorflow.python.keras.models import load_model
 import tensorflow as tf
@@ -1082,7 +1083,7 @@ def updateChanStatus():
                 cursor.execute('SELECT id FROM USER WHERE email=%s',(email,))
                 account=cursor.fetchone
                 if account:
-                    cursor.execute('SELECT * FROM Channelling WHERE channelId=%s AND status NOT LIKE %"COMPLETED"%' (chanId))
+                    cursor.execute('SELECT * FROM Channelling WHERE channelId=%s AND status NOT LIKE %"COMPLETED"%', (chanId))
                     available=cursor.fetchone
                     if available:
                         if status=='COMPLETED'or status=='EXPIRED':
