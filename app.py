@@ -198,6 +198,14 @@ def docD():
     # return redirect(url_for('doctor_search'))
 
 
+@app.route('/Clinic',methods=['Get','POST'])
+def Clinic():
+    return render_template("main.html")
+
+
+
+
+
 @app.route('/prescriptionPage',methods=['Get','POST'])
 def presPg():
     return render_template("prescription.html")
