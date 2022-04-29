@@ -43,9 +43,10 @@ app = Flask(__name__)
 app.secret_key = 'super secret key'
 # app.config['SESSION_TYPE'] = 'filesystem'
 # sess.init_app(app)
-# UPLOAD_FOLDER_TEST=r'H:\University of westminister\Level 5\SDGP\flaskProject\TestReports'
-UPLOAD_FOLDER_TEST='/Users/pramudiranaweera/Documents/SkinSafe/TestReports'
-UPLOAD_FOLDER_PRESS = r'H:\University of westminister\Level 5\SDGP\flaskProject\presImg'
+UPLOAD_FOLDER_TEST=r'H:\University of westminister\Level 5\SDGP\flaskProject\TestReports'
+# UPLOAD_FOLDER_TEST='/Users/pramudiranaweera/Documents/SkinSafe/TestReports'
+UPLOAD_FOLDER_PRESS = r'H:\University of westminister\Level 5\SDGP\flaskProject\presImg'\
+# UPLOAD_FOLDER_PRESS = '/Users/pramudiranaweera/Documents/SkinSafe/TestReports'
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER_PRESS
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER_TEST
@@ -280,7 +281,7 @@ def login_new():
 @app.route('/logout')
 def logout():
     try:
-        pdfList = os.listdir('TestReports')
+        pdfList = os.listdir('./static/TestReports')
         testReportsList = ['./static/TestReports/' + image for image in pdfList if
                            ("userId{0}".format(str(session['id']))) in image]
         for pdf in testReportsList:
@@ -736,7 +737,7 @@ def displayTestReport():
 
             # display images
 
-            pdfList = os.listdir('TestReports')
+            pdfList = os.listdir('./static/TestReports')
             testReportsList = ['./TestReports/' + image for image in pdfList if
                                ("userId{0}".format(str(session['id']))) in image]
 
@@ -792,6 +793,11 @@ def addPress():
                     cursor = conn.cursor()
                     cursor.execute(sql, data)
                     conn.commit()
+                    pdfList = os.listdir('TestReports')
+                    testReportsList = ['TestReports/' + image for image in pdfList if
+                                   ("userId{0}".format(str(session['id']))) in image]
+                    for pdf in testReportsList:
+                        os.remove(pdf)
             # return render_template("prescription.html",msg=msg)
             return redirect(url_for('displayPress'))
         return redirect(url_for('login_new'))
@@ -799,27 +805,23 @@ def addPress():
     except Exception as e:
         print(e)
 
+# TEST
 
-#  add test report
-
-# add prescription
-
-@app.route('/addTestReport', methods=['GET','POST'])
-def addTestReport():
+@app.route('/addTest', methods=['GET','POST'])
+def addTest():
     try:
         if 'loggedin' in session:
             msg = ''
 
             if request.method == 'POST':
-                file = request.files.get('file', None)
-                if 'email' in request.form and 'file' in request.files:
-                    file = request.files.get('file',None)
-                    email = request.form['email']
-                else:
-                    msg = 'No patient or file added'
-
-                    return render_template("testreports.html", msg=msg)
-
+                if 'image' not in request.files:
+                    msg = 'No file input'
+                    return render_template("clinicReportAdd.html", msg=msg)
+                email=request.form.get('email')
+                file = request.files['image']
+                if email=='':
+                    msg = 'Error ! Fill Email input field!'
+                    return render_template("clinicReportAdd.html", msg=msg)
 
                 conn = mysqldb.connect()
                 cursor = conn.cursor()
@@ -828,16 +830,15 @@ def addTestReport():
                 if account is None:
                     account = []
                     msg = 'There is no Patient registered from this email ' + '(' + email + ')!'
-                    return render_template("testreports.html", account=account, msg=msg)
-                id=account[0]
-
+                    return render_template("clinicReportAdd.html", account=account, msg=msg)
+                id = account[0]
                 # if user does not select file, browser also
                 # submit an empty part without filename
                 if file.filename == '':
-                    msg='No selected file'
-                    return render_template("testreports.html", msg=msg)
+                    msg = 'Error ! No file Selected'
+                    return render_template("clinicReportAdd.html", msg=msg)
                 if file and allowed_file(file.filename):
-                    file.filename = "TestReport" + str(id) + ".pdf"
+                    file.filename = "img" + str(session['id']) + ".pdf"
                     # filename = secure_filename(file.filename)
                     file_location = os.path.join(UPLOAD_FOLDER_TEST, file.filename)
                     file.save(file_location)
@@ -852,19 +853,93 @@ def addTestReport():
                         # uploadFile = base64.b64encode(newFile)
                         # _binaryFile = insertBLOB(file)
                     sql = "INSERT INTO TestReports(id,testReports) VALUES(%s ,%s)"
-                    data = (email, uploadFile,)
+                    data = (str(id), uploadFile,)
+
                     cursor.execute(sql, data)
                     conn.commit()
-                    msg = 'Test Report added successfully'
-                    return render_template("testreports.html", msg=msg)
+                pdfList = os.listdir('TestReports')
+                testReportsList = ['TestReports/' + image for image in pdfList]
+                for pdf in testReportsList:
+                    os.remove(pdf)
+                msg = 'Successfully added CliniC Test Report'
             # return render_template("prescription.html",msg=msg)
-            return render_template("testreports.html", msg=msg)
-
+            return render_template("clinicReportAdd.html",msg=msg)
         return redirect(url_for('login_new'))
 
     except Exception as e:
-
         print(e)
+
+
+#  add test report
+
+# add prescription
+
+# @app.route('/addTestReport', methods=['GET','POST'])
+# def addTestReport():
+#     try:
+#         if 'loggedin' in session:
+#             msg = ''
+#
+#             if request.method == 'POST':
+#                 file = request.files.get('file', None)
+#                 if 'email' in request.form and 'file' in request.files:
+#                     file = request.files.get('file',None)
+#                     email = request.form['email']
+#                 else:
+#                     msg = 'No patient or file added'
+#
+#                     return render_template("clinicReportAdd.html", msg=msg)
+#
+#
+#                 conn = mysqldb.connect()
+#                 cursor = conn.cursor()
+#                 cursor.execute('SELECT * FROM User WHERE email=%s', email)
+#                 account = cursor.fetchone()
+#                 if account is None:
+#                     account = []
+#                     msg = 'There is no Patient registered from this email ' + '(' + email + ')!'
+#                     return render_template("clinicReportAdd.html", account=account, msg=msg)
+#                 id=account[0]
+#
+#                 # if user does not select file, browser also
+#                 # submit an empty part without filename
+#                 if file.filename == '':
+#                     msg='No selected file'
+#                     return render_template("clinicReportAdd.html", msg=msg)
+#                 if file and allowed_file(file.filename):
+#                     file.filename = "TestReport" + str(id) + ".pdf"
+#                     # filename = secure_filename(file.filename)
+#                     file_location = os.path.join(UPLOAD_FOLDER_TEST, file.filename)
+#                     file.save(file_location)
+#
+#                     # newFile = open(file_location, 'rb').read()
+#                     # We must encode the file to get base64 string
+#                     with open(file_location, 'rb') as binary_file:
+#                         binary_file_data = binary_file.read()
+#                         base64_encoded_data = base64.b64encode(binary_file_data)
+#                         uploadFile = base64_encoded_data.decode('utf-8')
+#
+#                         # uploadFile = base64.b64encode(newFile)
+#                         # _binaryFile = insertBLOB(file)
+#                     sql = "INSERT INTO TestReports(id,testReports) VALUES(%s ,%s)"
+#                     data = (id, uploadFile,)
+#                     cursor.execute(sql, data)
+#                     conn.commit()
+#                     pdfList = os.listdir('./static/TestReports')
+#                     testReportsList = ['./static/TestReports/' + image for image in pdfList if
+#                                        ("userId{0}".format(str(session['id']))) in image]
+#                     for pdf in testReportsList:
+#                         os.remove(pdf)
+#                     msg = 'Test Report added successfully'
+#                     return render_template("clinicReportAdd.html", msg=msg)
+#             # return render_template("prescription.html",msg=msg)
+#             return render_template("clinicReportAdd.html", msg=msg)
+#
+#         return redirect(url_for('login_new'))
+#
+#     except Exception as e:
+#
+#         print(e)
 
 
 @app.route('/main', methods=['GET','POST'])

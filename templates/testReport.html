@@ -62,7 +62,7 @@
     </div>
     <div class="gallery">
         {% for testReportList in testReportList %}
-            <a href="{{ url_for('static', filename=testReportList)}}"><embed type="application/pdf" src = "{{ url_for('static', filename=testReportList)}}" style="width: 250px; height: 200px; justify-content: center"></a>
+            <a href="{{ url_for('static', filename=testReportList)}}"><embed type="application/pdf" src = "{{ url_for('static', filename=testReportList)}}" style="width: 400px; height: 300px; justify-content: center"></a>
         {% endfor %}
     </div>
 
