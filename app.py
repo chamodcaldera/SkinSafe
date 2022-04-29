@@ -177,7 +177,7 @@ def upload_predict():
             # check if the directory was created and image stored
             # msg = os.listdir(store_path)
             class_name, pre = predictor(store_path, csv_path, model_path, crop_image=False)
-            msg = f' image is of class {class_name} with a probability of {pre * 100: 6.2f} %'
+            msg = f'  {class_name} Disease detected with a probability of {pre * 100: 6.2f} %'
     return render_template("scanSkin.html", msg=msg)
 
 
