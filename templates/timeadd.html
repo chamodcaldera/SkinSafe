@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Doctor Registration Form </title>
+    <link rel="stylesheet" href="../static/register.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+    <div class="container">
+        <div class="title">Channelling timeAdd</div>
+        <div class="msg">{{ msg }}</div>
+        <div class="content">
+            <form action="{{ url_for('#')}}" method="post" autocomplete="off">
+                <div class="user-details">
+                    <div class="input-box">
+                        <span class="details">Doctors First Name</span>
+                        <input type="text" name="firstname" id="firstname" placeholder="Enter Doctor First Name">
+                    </div>
+                    <div class="input-box">
+                        <span class="details"> Doctor Last Name </span>
+                        <input type="text" name="lastname" id="lastname" placeholder="Enter Doctor Last Name">
+                    </div>
+
+                    <div class="input-box">
+                        <span class="details">Doctor Email</span>
+                        <input type="email" id="email" name="email" placeholder="Enter Doctor Email">
+                    </div>
+                    <div class="formElement">
+                    <label for="appointment">Appointment Date</label>
+                    <input type="date"  name="appointment" id="appointment" value="{{ appointment }}" required>
+                </div>
+
+                    <div class="formElement">
+                    <label for="appointment">Start Time range</label>
+                    <input type="time"  name="appointment" id="appointment" value="{{ appointment }}" required>
+                </div>
+                    <div class="formElement">
+                    <label for="appointment">End Time range</label>
+                    <input type="time"  name="appointment" id="appointment" value="{{ appointment }}" required>
+                </div>
+
+                </div>
+
+                <div class="btn1">
+                    <button type="submit" onclick="required()">Submit</button>
+                </div>
+            </form>
+            <p class="log">Close Register form <a href="{{ url_for('doctor_search')}}">CLOSE</a></p>
+        </div>
+    </div>
+
+</body>
+
+</html>
