@@ -31,7 +31,7 @@
                     <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-md-0">
                       <div class="icon-box">
                         <div class="icon"><i class="las la-file-prescription"></i></div>
-                        <h4><a href="">Prescriptions</a></h4>
+                        <h4><a href="{{ url_for('displayPress')}}">Prescriptions</a></h4>
                         <p>Access your prescriptions here!</p>
                       </div>
                     </div>
@@ -39,7 +39,7 @@
                     <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-lg-0">
                       <div class="icon-box">
                         <div class="icon"><i class="las la-notes-medical"></i></div>
-                        <h4><a href="">Clinic Reports</a></h4>
+                        <h4><a href="{{ url_for('displayTestReport') }}">Clinic Reports</a></h4>
                         <p>Access your clinical reports from here!</p>
                       </div>
                     </div>
@@ -47,7 +47,7 @@
                     <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4">
                       <div class="icon-box">
                         <div class="icon"><i class="las la-user-cog"></i></div>
-                        <h4><a href="">Channelling Info & User Settings</a></h4>
+                        <h4><a href="{{ url_for('displayProfile')}}">Channelling Info & User Settings</a></h4>
                         <p>Access your channelling info and user settings here!</p>
                       </div>
                     </div>
@@ -65,11 +65,50 @@
                 </div>
             </section><!-- End Menu Section -->
           
-
         </main>
-
-        <footer>
-
-        </footer>
+        
+        <footer class="footer">
+          <div class="container">
+            <div class="row">
+              <div class="footer-col">
+                <h4>Skin Safe</h4>
+                <ul>
+                  <li>Email : skinsafe@techfusion.com</li>
+                  <li>Contact : </li>
+                  <li>Location : Colombo, Sri Lanka</li>
+                </ul>
+              </div>
+              <div class="footer-col">
+                <h4>Our Services</h4>
+                <ul>
+                  <li><a href="#">Skin Scan</a></li>
+                  <li><a href="#">Channelling</a></li>
+                  <li><a href="#">Prescription Management</a></li>
+                  <li><a href="#">Test Report Management</a></li>
+                </ul>
+              </div>
+              <div class="footer-col">
+                <h4>follow us</h4>
+                <div class="social-links">
+                  <a href="#"><i class="fab fa-facebook-f"></i></a>
+                  <a href="#"><i class="fab fa-twitter"></i></a>
+                  <a href="#"><i class="fab fa-instagram"></i></a>
+                  <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+              </div>
+     
+           <div class="footer-col2">
+             <div class="me-md-auto text-center text-md-start">
+               <div class="copyright">
+                 &copy; Copyright <strong><span>Skin Safe</span></strong>. All Rights Reserved
+               </div>
+               <div class="credits">
+                 Designed by <a>Tech Fusion</a>
+               </div>
+             </div>	 
+           </div>
+            </div>
+          </div>
+       </footer>
     </body>    
 </html>
