@@ -2,6 +2,9 @@ body {
     font-family: "Open Sans", sans-serif;
     color: #444444;
     margin: 0;
+    background-image: url("mainMenu.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
   }
 
 .topNav{
@@ -91,7 +94,17 @@ img{
 .appointment-btn:hover {
   background: #145e9f;
 }
-  
+
+.row1, .row2{
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.icon-box{
+    width: 300px;
+    height: 150px;
+    background: #FFFFFF;
+}
   a {
     color: #1977cc;
     text-decoration: none;
@@ -101,7 +114,20 @@ img{
     color: #3291e6;
     text-decoration: none;
   }
-  
+.section-title{
+    margin-left: 7%;
+    margin-bottom: 5%;
+    color: #FFFFFF;
+    line-height: 8px;
+}
+h1{
+    text-transform: uppercase;
+    text-shadow: 0 3px black, 0 2px #004d80;
+    font-size: 60px;
+}
+.section-title p{
+    font-size: 30px;
+}
   h1, h2, h3, h4, h5, h6 {
     font-family: "Raleway", sans-serif;
   }
