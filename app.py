@@ -183,6 +183,13 @@ def upload_predict():
     return render_template("scanSkin.html", msg=msg)
 
 
+@app.route('/footer', methods=['GET', 'POST'])
+def footer():
+    return render_template("footer.html")
+
+@app.route('/header', methods=['GET', 'POST'])
+def header():
+    return render_template("header.html")
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -993,7 +1000,9 @@ def add_channel():
                         'SELECT dt.doctorId AS docID, dt.day AS day, dt.timeStart AS start, dt.timeEnd AS end, d.docFirstName AS firstName, d.docLastName AS lastName FROM DoctorTimeSlots dt JOIN Doctor d ON dt.doctorId = d.docId WHERE day = % s',
                         (weekday))
                     doctorList = cursor.fetchall()
-
+                    if(doctorList == ()):
+                        msgChan="Try Again With Another Date. There Are No Doctors Available For The Selected Date."
+                        return render_template("Channelling.html",name=name,appointment=appointment, email=email, mobNo=mobNo, msg=msgChan)
                     for doc in doctorList:
                         doctorListAppointment = list(doctorList)
                         cursor.execute(

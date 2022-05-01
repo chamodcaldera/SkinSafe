@@ -9,7 +9,7 @@
 </head>
 <body>
     <div class="body">
-    <div include-html="header.html" id="header_file"></div>
+        <div include-html="{{ url_for('header') }}" id="header_file"></div>
 
     <h1 class = "heading">Test Reports</h1>
     <div>
@@ -21,7 +21,7 @@
             <a href="{{ url_for('static', filename=testReportList)}}"><embed type="application/pdf" src = "{{ url_for('static', filename=testReportList)}}" style="width: 400px; height: 300px; justify-content: center"></a>
         {% endfor %}
     </div>
-    <div include-html="footer.html" id="footer_file"></div>
+        <div include-html="{{ url_for('footer') }}" id="footer_file"></div>
     </div>
 
 <script src="../static/js/jquery-3.6.0.min.js"></script>

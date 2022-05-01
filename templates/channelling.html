@@ -9,7 +9,7 @@
 </head>
 <body >
 <div class="body">
-    <div include-html="header.html" id="header_file"></div>
+    <div include-html="{{ url_for('header') }}" id="header_file"></div>
 
     <h1 class="heading">Book an appointment</h1>
 
@@ -64,7 +64,7 @@
             </form>
         </div>
     </section>
-    <div include-html="footer.html" id="footer_file"></div>
+    <div include-html="{{ url_for('footer') }}" id="footer_file"></div>
     </div>
 
 <script src="../static/js/jquery-3.6.0.min.js"></script>
