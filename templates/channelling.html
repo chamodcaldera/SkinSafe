@@ -8,52 +8,8 @@
     <link rel="stylesheet" href="../static/channelling.css">
 </head>
 <body >
-    <header>
-        <div class="topNav">
-            <div class="topRight">
-                <div class="phone">
-                    <i class="fa-solid fa-phone"></i>
-                    <span>+94 (11) 236 4760</span>
-                </div>
-                <div class="email">
-                    <i class="fa-solid fa-envelope"></i>
-                    <span><a href="mailto:skinsafe@techfusion.com">skinsafe@techfusion.com</a></span>
-                </div>
-                <div class="location">
-                    <i class="fa-solid fa-location-dot"></i>
-                    <span>Colombo,Sri Lanka</span>
-                </div>
-            </div>
-
-            <div class="topLeft">
-                <div class="twitter">
-                    <i class="fa-brands fa-twitter"></i>
-                </div>
-                <div class="facebook">
-                    <i class="fa-brands fa-facebook"></i>
-                </div>
-                <div class="instagram">
-                     <i class="fa-brands fa-instagram"></i>
-                </div>
-               <div class="linkedin">
-                   <i class="fa-brands fa-linkedin"></i>
-               </div>
-            </div>
-        </div>
-
-         <div class="bottomNav">
-             <img src = "/static/skinSafeLogo.jpg">
-             <div class="bottomLeft">
-             <ul class="navOptions">
-              <li><a href="{{ url_for('Clinic')}}">Home</a></li>
-              <li><a href="{{ url_for('Clinic')}}">Clinic Manager</a></li>
-              <li><a href="{{ url_for('upload_predict')}}">Scan your Skin</a></li>
-              <li><a href="#">Contact</a></li>
-             </ul>
-             <a href="#channelling" class="appointment-btn">Book an Appointment</a>
-             </div>
-         </div>
-    </header>
+<div class="body">
+    <div include-html="header.html" id="header_file"></div>
 
     <h1 class="heading">Book an appointment</h1>
 
@@ -107,7 +63,12 @@
                 </div>
             </form>
         </div>
-      </section>
+    </section>
+    <div include-html="footer.html" id="footer_file"></div>
+    </div>
+
+<script src="../static/js/jquery-3.6.0.min.js"></script>
+<script src="../static/js/include-html.min.js"></script>
 
             <script type="text/javascript">
 
