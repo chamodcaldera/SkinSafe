@@ -4,17 +4,17 @@ import pymysql
 
 
 def connection():
-    mysqldb=mysql.connector.connect(host="localhost", user="root",password="")#established connection
-    # mysqldb = pymysql.connect(
-    #     host='mysql-77609-0.cloudclusters.net',
-    #     port=11976,
-    #     user='admin',
-    #     password='fOHh2cA0',
-    #     db='skinsafe',
-    #     server_public_key='mysql-77609-db.mysql-77609:11976',
-    #
-    #
-    # )
+    # mysqldb=mysql.connector.connect(host="localhost", user="root",password="")#established connection
+    mysqldb = pymysql.connect(
+        host='skinsafe.cfjzzf8ivqho.us-east-1.rds.amazonaws.com',
+        port=3306,
+        user='admin',
+        password='12345678',
+        db='SkinSafe',
+
+
+
+    )
     mycursor=mysqldb.cursor()#cursor() method create a cursor object
     mycursor.execute("CREATE DATABASE IF NOT EXISTS SkinSafe")  # Execute SQL Query to create a database
     # mycursor = mysqldb.cursor()  # cursor() method create a cursor object
