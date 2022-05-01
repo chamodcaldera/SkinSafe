@@ -1,7 +1,8 @@
 .footer_style {
     margin: 0px;
     padding: 0px;
-    font-family: "Lato", sans-serif;
+    font-family: "Open Sans", sans-serif;
+    min-height: auto;
 }
 
 .row {
@@ -30,25 +31,46 @@
     border-top-right-radius: 100px;
     border-bottom-left-radius: 100px;
 }
+.global h4{
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 30px;
+    margin-bottom: 3%;
+}
+
 .global h6 {
     margin-top: 0;
     margin-bottom: 12px;
     font-weight: 700;
-    font-size: 18px;
+    font-size: 20px;
     text-transform: uppercase;
     letter-spacing: 1px;
+    margin-left: 19%;
 }
+
+.global h5{
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.icon-location,.icon-phone {
+    display: flex;
+}
+
+.icon-location i, .icon-phone i{
+    margin-right: 7px;
+}
+
 .global ul {
     list-style-type: none;
     line-height: 30px;
     font-size: 15px;
-
-
 }
 .global ul a {
     color: #fff;
     text-decoration: none;
     transition: 0.3s;
+    text-align: center;
 }
 .global ul a:hover {
     opacity: 0.8;
