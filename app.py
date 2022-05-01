@@ -945,9 +945,7 @@ def channelling():
                 conn.commit()
                 msg = 'Channel number ' + channelId + ' deleted successfully'
 
-            cursor.execute(
-                'SELECT c.name as name, c.channelId As id, c.channel_date As date,  c.status as status, d.docFirstName as fname, d.docLastName As last,dt.timeStart As start, c.channel_time As num FROM Channelling c JOIN Doctor d ON c.doctorId=d.docId JOIN DoctorTimeSlots dt ON d. docId=dt.doctorId WHERE id = % s',
-                (session['id'],))
+            cursor.execute('SELECT c.name as name, c.channelId As id, c.channel_date As date,  c.status as status, d.docFirstName as fname, d.docLastName As last, c.channel_time As start, c.appointment_Num As num FROM Channelling c JOIN Doctor d ON c.doctorId=d.docId  WHERE c.id = % s',(session['id'],))
             record = cursor.fetchall()
             return render_template("profile.html", tab=3, account=account, record=record, msg=msgChan)
         return redirect(url_for('login_new'))
@@ -1026,11 +1024,11 @@ def add_channel():
                         msgChan = "Select Doctor Before Booking an Appointment"
                         return render_template("Channelling.html", msg=msgChan)
 
-                    doctorId, appointmentNumber = (int(x) for x in data.split(':'))
+                    doctorId, appointmentNumber,appoitmentTime = data.split('/')
                     status = 'Pending'
                     msg = request.form['message']
-                    sql = "INSERT INTO Channelling(id,name,channel_date ,channel_time , doctorId , status,message) VALUES(%s, %s, %s,%s, %s,%s,%s)"
-                    data = ((session['id']), name, confirmDate, appointmentNumber, doctorId, status, msg,)
+                    sql = "INSERT INTO Channelling(id,name,channel_date ,channel_time,appointment_Num , doctorId , status,message) VALUES(%s, %s, %s,%s, %s,%s,%s,%s)"
+                    data = ((session['id']), name, confirmDate, appoitmentTime ,appointmentNumber, doctorId, status, msg,)
 
                     cursor.execute(sql, data)
                     conn.commit()

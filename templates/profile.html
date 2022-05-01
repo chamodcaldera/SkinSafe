@@ -197,7 +197,7 @@ body, html {
 
                     <div class="scrollDiv">
 
-                        {% for record in record %}
+                        {% for chanReocord in record %}
 
                             <div class="receipt">
                                 <h3 class="center">Channeling Receipt</h3>
@@ -205,39 +205,39 @@ body, html {
                                 <table>
                                     <tr>
                                         <td>Name : </td>
-                                        <td>{{ record[0] }}</td>
+                                        <td>{{ chanReocord[0] }}</td>
 
                                     </tr>
                                     <tr>
                                         <td>Receipt No : </td>
-                                        <td>{{ record[1] }}</td>
+                                        <td>{{ chanReocord[1] }}</td>
                                     </tr>
                                     <tr>
                                         <td>Doctor Name : </td>
-                                        <td>{{ record[4]+" "+ record[5]}}</td>
+                                        <td>{{ chanReocord[4]+" "+ chanReocord[5]}}</td>
                                     </tr>
                                     <tr>
                                         <td>Date :  </td>
-                                        <td>{{ record[2] }}</td>
+                                        <td>{{ chanReocord[2] }}</td>
                                     </tr>
                                     <tr>
                                         <td>Time :  </td>
-                                        <td>{{ record[6] }}</td>
+                                        <td>{{ chanReocord[6] }}</td>
                                     </tr>
                                     <tr>
                                         <td>Status: </td>
-                                        <td>{{ record[3] }}</td>
+                                        <td>{{ chanReocord[3] }}</td>
 
                                     </tr>
                                      <tr>
                                         <td>Channelling No : </td>
-                                        <td>{{ record[7] }}</td>
+                                        <td>{{ chanReocord[7] }}</td>
 
                                     </tr>
                                     <tr>
 
-                                         <td><button type="submit" class="btn" value="{{ record[1] }}" name="channelId" onclick="{{ url_for('channelling') }} ">DELETE</button></td>
-{#                                        <td><input type="submit" name="channelId" value="{{ record[0] }}"></td>#}
+                                         <td><button type="submit" class="btn" value="{{ chanReocord[1] }}" name="channelId" onclick="{{ url_for('channelling') }} ">DELETE</button></td>
+{#                                        <td><input type="submit" name="channelId" value="{{ chanReocord[0] }}"></td>#}
 
                                     </tr>
                                 </table>

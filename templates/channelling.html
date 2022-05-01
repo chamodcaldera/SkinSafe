@@ -90,7 +90,7 @@
                     <select name="doctorId" id="doctor" class="form-select">
                         <option value="">Select Doctor</option>
                             {% for doctorList in doctorList %}
-                                <option value="{{ doctorList[0] }}:{{ doctorList[6] }}">Dr. {{ doctorList[4]}} {{doctorList[5]}} ( {{doctorList[2]}}  - {{doctorList[3]}} ) -> ( AVAILABLE APPOINTMENT NUMBER : {{doctorList[6]}} )</option>
+                                <option value="{{ doctorList[0] }}/{{ doctorList[6] }}/{{doctorList[2]}} ">Dr. {{ doctorList[4]}} {{doctorList[5]}} ( {{doctorList[2]}}  - {{doctorList[3]}} ) -> ( AVAILABLE APPOINTMENT NUMBER : {{doctorList[6]}} )</option>
 {#                                <input type="hidden" value="{{ doctorList[6] }}" name="appNum">#}
                             {% endfor %}
                     </select>
