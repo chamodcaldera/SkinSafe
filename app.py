@@ -298,31 +298,7 @@ def logout():
     except Exception as e:
         print(e)
 
-# @app.route('/loginAdmin', methods=['GET', 'POST'])
-# def login_admin():
-#     msg = ''
-#     if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
-#         username = request.form['username']
-#         password = request.form['password']
-#         conn = mysqldb.connect()
-#         cursor = conn.cursor()
-#         cursor.execute('SELECT * FROM Admin WHERE email = %s ', (username))
-#         account = cursor.fetchone()
-#         if account:
-#             check = check_password_hash(account[4], password)
-#             if check:
-#                 session['loggedin'] = True
-#                 session['id'] = account[0]
-#                 session['username'] = account[3]
-#                 msg = 'Logged in successfully !'
-#                 return render_template('home.html')
-#             else:
-#                 msg = 'Incorrect username / password !'
-#
-#         else:
-#             msg = 'Account dose not exist From this email address '
-#
-#     return render_template('admindashboard.html', msg=msg)
+
 
 @app.route('/regDoc', methods=['GET', 'POST'])
 def regDoc():
@@ -491,51 +467,6 @@ def registerDoctor():
         print(e)
 
 
-# add appointments
-
-# # add appointments
-#
-# @app.route('/addChannel', methods=['GET','POST'])
-# def add_channel():
-#
-#     if 'loggedin' in session:
-#
-#         conn = mysqldb.connect()
-#         cursor = conn.cursor()
-#         if request.method == 'POST' and 'appointment' in request.form:
-#             name = request.form['name']
-#             if(name==''):
-#                 appointment = request.form['appointment']
-#                 date,time,meridiem=appointment.split(' ')
-#                 hour,min = (int(x) for x in time.split(':'))
-#                 month,day, year = (int(x) for x in date.split('/'))
-#                 ans = datetime.date(year, month, day)
-#                 weekday=ans.strftime("%A")
-#                 cursor.execute('SELECT dt.docterId AS docID, dt.day AS day, dt.timeStart AS start, dt.timeEnd AS end, d.docFirstName AS firstName, d.docLastName AS lastName FROM DoctorTimeSlots dt JOIN Doctor d ON dt.docterId = d.docId WHERE day = % s', weekday)
-#                 doctorList = cursor.fetchall()
-#                 return render_template("channelling.html", doctorList=doctorList)
-#
-#             elif request.method == 'POST' and 'name' in request.form and 'email' in request.form and 'mobNo' in request.form and 'appointment' in request.form and 'status' in request.form or 'message' in request.form:
-#
-#                 email = request.form['email']
-#                 mobNo = request.form['mobNo']
-#                 confirmAppointments = request.form['appointment']
-#                 doctorId = request.form['doctorId']
-#                 status = 'Pending'
-#                 msg = request.form['message']
-#                 confirmDate, confirmTime, confirmMeridiem = confirmAppointments.split(' ')
-#                 sql = "INSERT INTO Channelling(id,channel_date ,channel_time , docterId , status) VALUES(%s, %s, %s,%s, %s)"
-#                 data = ((session['id']), confirmDate, confirmTime, doctorId, status)
-#
-#                 cursor.execute(sql, data)
-#                 conn.commit()
-#
-#
-#         return render_template("channelling.html",)
-#     return redirect(url_for('login'))
-
-# dashboard.html load
-
 
 #display selected doctor
 
@@ -544,10 +475,13 @@ def doctor_search():
 
     try:
         if 'loggedin' in session:
+
             conn = mysqldb.connect()
             cursor = conn.cursor()
             msg=''
             account=[]
+            if (request.form.get('button') == 'addchanel'):
+                return redirect(url_for('docTime'))
             if request.method == 'POST':
                 if 'email' in request.form:
                     email = request.form['email']
@@ -614,6 +548,8 @@ def patient_Search():
             cursor = conn.cursor()
             msg=''
             account=[]
+            if(request.form.get('button')=='addchanel'):
+                return redirect(url_for('docTime'))
             if request.method == 'POST':
                 if  'email' in request.form :
                     email = request.form['email']
@@ -870,76 +806,6 @@ def addTest():
         print(e)
 
 
-#  add test report
-
-# add prescription
-
-# @app.route('/addTestReport', methods=['GET','POST'])
-# def addTestReport():
-#     try:
-#         if 'loggedin' in session:
-#             msg = ''
-#
-#             if request.method == 'POST':
-#                 file = request.files.get('file', None)
-#                 if 'email' in request.form and 'file' in request.files:
-#                     file = request.files.get('file',None)
-#                     email = request.form['email']
-#                 else:
-#                     msg = 'No patient or file added'
-#
-#                     return render_template("clinicReportAdd.html", msg=msg)
-#
-#
-#                 conn = mysqldb.connect()
-#                 cursor = conn.cursor()
-#                 cursor.execute('SELECT * FROM User WHERE email=%s', email)
-#                 account = cursor.fetchone()
-#                 if account is None:
-#                     account = []
-#                     msg = 'There is no Patient registered from this email ' + '(' + email + ')!'
-#                     return render_template("clinicReportAdd.html", account=account, msg=msg)
-#                 id=account[0]
-#
-#                 # if user does not select file, browser also
-#                 # submit an empty part without filename
-#                 if file.filename == '':
-#                     msg='No selected file'
-#                     return render_template("clinicReportAdd.html", msg=msg)
-#                 if file and allowed_file(file.filename):
-#                     file.filename = "TestReport" + str(id) + ".pdf"
-#                     # filename = secure_filename(file.filename)
-#                     file_location = os.path.join(UPLOAD_FOLDER_TEST, file.filename)
-#                     file.save(file_location)
-#
-#                     # newFile = open(file_location, 'rb').read()
-#                     # We must encode the file to get base64 string
-#                     with open(file_location, 'rb') as binary_file:
-#                         binary_file_data = binary_file.read()
-#                         base64_encoded_data = base64.b64encode(binary_file_data)
-#                         uploadFile = base64_encoded_data.decode('utf-8')
-#
-#                         # uploadFile = base64.b64encode(newFile)
-#                         # _binaryFile = insertBLOB(file)
-#                     sql = "INSERT INTO TestReports(id,testReports) VALUES(%s ,%s)"
-#                     data = (id, uploadFile,)
-#                     cursor.execute(sql, data)
-#                     conn.commit()
-#                     pdfList = os.listdir('./static/TestReports')
-#                     testReportsList = ['./static/TestReports/' + image for image in pdfList if
-#                                        ("userId{0}".format(str(session['id']))) in image]
-#                     for pdf in testReportsList:
-#                         os.remove(pdf)
-#                     msg = 'Test Report added successfully'
-#                     return render_template("clinicReportAdd.html", msg=msg)
-#             # return render_template("prescription.html",msg=msg)
-#             return render_template("clinicReportAdd.html", msg=msg)
-#
-#         return redirect(url_for('login_new'))
-#
-#     except Exception as e:
-#
-#         print(e)
 
 
 @app.route('/main', methods=['GET','POST'])
@@ -1120,6 +986,7 @@ def add_channel():
                     ExpectedDate = parser.parse(appointment).date()
                     if CurrentDate > ExpectedDate:
                         msgChan='Invalid Date! Please Select Valid Date'
+                        return render_template("Channelling.html", msg=msgChan)
 
                     year, month, day = (int(x) for x in appointment.split('-'))
                     ans = date(year, month, day)
@@ -1146,18 +1013,22 @@ def add_channel():
                         finalList.append(doc)
 
                     finalList = tuple(finalList)
+                    msgChan = "Available doctors for "+appointment+ " display in Select doctor option."
 
                     return render_template("Channelling.html", doctorList=finalList, appNumArray=appNumArray, name=name,
                                            appointment=appointment, email=email, mobNo=mobNo, msg=msgChan)
 
                 elif request.method == 'POST' and 'name' in request.form and 'email' in request.form and 'appNum' in request.form and 'mobNo' in request.form and 'appointment' in request.form and 'status' in request.form or 'message' in request.form:
-
-                    confirmDate = request.form['appointment']
                     data = request.form['doctorId']
+                    confirmDate = request.form['appointment']
+
+                    if(data ==''):
+                        msgChan = "Select Doctor Before Booking an Appointment"
+                        return render_template("Channelling.html", msg=msgChan)
+
                     doctorId, appointmentNumber = (int(x) for x in data.split(':'))
                     status = 'Pending'
                     msg = request.form['message']
-
                     sql = "INSERT INTO Channelling(id,name,channel_date ,channel_time , doctorId , status,message) VALUES(%s, %s, %s,%s, %s,%s,%s)"
                     data = ((session['id']), name, confirmDate, appointmentNumber, doctorId, status, msg,)
 
@@ -1217,30 +1088,37 @@ def updateChanStatus():
 def docTime():
     try:
         msg = ''
-        if request.method == 'POST' and 'day' in request.form and 'docId' in request.form and 'timeStart' in request.form and 'timeEnd' in request.form :
+        if request.method == 'POST' and 'firstname' in request.form and 'lastname' in request.form and 'email' in request.form and 'day' in request.form and 'startTime' in request.form and 'endTime' in request.form :
+
             day = request.form['day'].title()
-            docId = request.form['docId']
-            timeStart = request.form['timeStart']
-            timeEnd = request.form['timeEnd']
+            if (day == ''):
+                msg='Error! Complete the day input field.'
+                return render_template('timeadd.html', msg=msg)
+            email = request.form['email']
+            timeStart = request.form['startTime']
+            timeEnd = request.form['endTime']
 
             conn = mysqldb.connect()
             cursor = conn.cursor()
-            cursor.execute('SELECT * FROM Doctor WHERE docId = %s', (docId,))
+
+            cursor.execute('SELECT docId FROM Doctor WHERE docEmail = %s', (email,))
             account = cursor.fetchone()
             if account:
-                # save edits
-                sql = "INSERT INTO DoctorTimeSlots(docotrId,day,timeStart,timeEnd) VALUES(%s, %s, %s,%s)"
+                docId=account[0]
+                sql = "INSERT INTO DoctorTimeSlots(doctorId,day,timeStart,timeEnd) VALUES(%s, %s, %s,%s)"
                 data = (docId,day,timeStart,timeEnd)
                 cursor.execute(sql, data)
                 conn.commit()
                 msg = 'Successfully recorded!'
-                # return render_template('index.html.html', msg=msg)
 
+            else:
+                msg='There is no Doctor Registered from '+email
 
         elif request.method == 'POST':
 
             msg = 'Please fill out the form !'
-        return render_template('docTime.html', msg=msg)
+
+        return render_template('timeadd.html', msg=msg)
 
     except Exception as e:
         print(e)

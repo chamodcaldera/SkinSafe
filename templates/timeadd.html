@@ -13,7 +13,7 @@
         <div class="title">Channelling timeAdd</div>
         <div class="msg">{{ msg }}</div>
         <div class="content">
-            <form action="{{ url_for('#')}}" method="post" autocomplete="off">
+            <form action="{{ url_for('docTime')}}" method="post" autocomplete="off">
                 <div class="user-details">
                     <div class="input-box">
                         <span class="details">Doctors First Name</span>
@@ -26,28 +26,29 @@
 
                     <div class="input-box">
                         <span class="details">Doctor Email</span>
-                        <input type="email" id="email" name="email" placeholder="Enter Doctor Email">
+                        <input type="email" id="email" name="email" placeholder="Enter Doctor Email" required>
                     </div>
                     <div class="formElement">
                         <span class="details">Date</span>
-                    <select name="date" id="date">
-                        <option value="monday">Monday</option>
-                         <option value="tuesday">Tuesday</option>
-                     <option value="wednesday">Wednesday</option>
-                             <option value="thursday">Thursday</option>
-                         <option value="friday">Friday</option>
-                     <option value="saturday">Saturday</option>
-                             <option value="sunday">Sunday</option>
+                    <select name="day" id="date">
+                        <option value="">Select Day</option>
+                        <option value="Monday">Monday</option>
+                         <option value="Tuesday">Tuesday</option>
+                     <option value="Wednesday">Wednesday</option>
+                             <option value="Thursday">Thursday</option>
+                         <option value="Friday">Friday</option>
+                     <option value="Saturday">Saturday</option>
+                             <option value="Sunday">Sunday</option>
                     </select>
                 </div>
 
                     <div class="formElement">
                     <label for="appointment">Start Time range</label>
-                    <input type="time"  name="appointment" id="appointment" value="{{ appointment }}" required>
+                    <input type="time"  name="startTime" id="appointment" value="{{ appointment }}" required>
                 </div>
                     <div class="formElement">
                     <label for="appointment">End Time range</label>
-                    <input type="time"  name="appointment" id="appointment" value="{{ appointment }}" required>
+                    <input type="time"  name="endTime" id="appointment" value="{{ appointment }}" required>
                 </div>
 
                 </div>
