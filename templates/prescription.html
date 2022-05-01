@@ -46,9 +46,9 @@
              <img src = "/static/skinSafeLogo.jpg">
              <div class="bottomLeft">
              <ul class="navOptions">
-              <li><a href="#">Home</a></li>
-              <li><a href="#">Clinic Manager</a></li>
-              <li><a href="#">Scan your Skin</a></li>
+              <li><a href="{{ url_for('home')}}">Home</a></li>
+              <li><a href="{{ url_for('Clinic')}}">Clinic Manager</a></li>
+              <li><a href="{{ url_for('upload_predict')}}">Scan your Skin</a></li>
               <li><a href="#">Contact</a></li>
              </ul>
              <a href="#channelling" class="appointment-btn">Book an Appointment</a>
