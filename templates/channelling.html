@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <title>Book an Appointment</title>
+    <script src="https://kit.fontawesome.com/4ff5eafb8e.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="../static/channelling.css">
+</head>
+<body >
+<div class="body">
+    <div include-html="header.html" id="header_file"></div>
+
+    <h1 class="heading">Book an appointment</h1>
+
+    <section>
+
+        <div class="container">
+            <form action="{{ url_for('add_channel')}}" method="post" role="form" class="form">
+                <p id="message">{{ msg }}</p>
+                <div class="formElement">
+                    <label for="name">Full Name</label>
+                    <input type="text" name="name" class="form-control" id="name" disabled="disabled" placeholder="Full Name" required value="{{ name }}">
+                </div>
+
+                <div class="formElement">
+                    <label for="email">Email</label>
+                    <input type="email" class="form-control" name="email" id="email" disabled="disabled" placeholder="Email" required value="{{ email }}">
+                </div>
+
+                <div class="formElement">
+                    <label for="mobNo">Phone Number</label>
+                    <input type="tel" class="form-control" name="mobNo" id="mobNo" placeholder="Phone Number" disabled="disabled" pattern="[0-9]{10}" value="{{ mobNo }}" required>
+                </div>
+
+                <div class="formElement">
+                    <label for="appointment">Appointment Date</label>
+                    <input type="date"  name="appointment" id="appointment" value="{{ appointment }}" required>
+                </div>
+
+                <div>
+                    <button name='button' type="submit" onclick="validate()" value="checkOption">Check Option</button>
+                </div>
+                <br>
+
+                <div class="formElement">
+                    <select name="doctorId" id="doctor" class="form-select">
+                        <option value="">Select Doctor</option>
+                        {% for doctorList in doctorList %}
+                        <option value="{{ doctorList[0] }}/{{ doctorList[6] }}/{{doctorList[2]}} ">Dr. {{ doctorList[4]}} {{doctorList[5]}} ( {{doctorList[2]}}  - {{doctorList[3]}} ) -> ( AVAILABLE APPOINTMENT NUMBER : {{doctorList[6]}} )</option>
+                        {#                                <input type="hidden" value="{{ doctorList[6] }}" name="appNum">#}
+                        {% endfor %}
+                    </select>
+                </div>
+
+
+                <div class="formElement">
+                    <label for="message">Message</label>
+                    <textarea class="form-control" name="message" id="message" rows="5" placeholder="Message (Optional)"></textarea>
+                </div>
+
+                <div>
+                    <button type="submit" value="makeAppointment">Make an Appointment</button>
+                </div>
+            </form>
+        </div>
+
+    </section>
+    <div include-html="footer.html" id="footer_file"></div>
+</div>
+
+<script src="../static/js/jquery-3.6.0.min.js"></script>
+<script src="../static/js/include-html.min.js"></script>
+
+<script type="text/javascript">
+
+    setTimeout(function(){
+        var msg=document.getElementById("message");
+        msg.parentNode.removeChild(msg);
+    },5000)
+
+    function validate() {
+        document.getElementById("name").disabled = false;
+        document.getElementById("email").disabled = false;
+        document.getElementById("mobNo").disabled = false;
+
+    }
+
+</script>
+<script>
+    document.getElementById("name").disabled = false;
+    document.getElementById("email").disabled = false;
+    document.getElementById("mobNo").disabled = false;
+
+</script>
+</body>
+</html>
