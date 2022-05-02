@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
     <link rel="stylesheet" href='../static/admin.css'>
     <link rel="stylesheet" href='../static/doctors.css'>
+    <link rel="stylesheet" href="/static/stylePopupWindow.css">
+
 </head>
 
 <body>
@@ -36,7 +38,7 @@
 
 
                 <li>
-                    <a href="{{ url_for('logout')}} "><span class="las la-sign-out-alt "></span>
+                        <a id="loggg" onclick="openPopup()"><span class="las la-sign-out-alt"  > </span>
                         <span>Logout</span></a>
                 </li>
             </ul>
@@ -64,17 +66,17 @@
                 </div>
                 <br>
 
-                <button   id="removepatient" name="button" value="searchDoc"> Search Doctor</button>
+                <button  class="button" id="removepatient" name="button" value="searchDoc"> Search</button>
 
 
 
-                <button   id="removepatient" name="button" value="addDoc"> Add Doctor</button>
+                <button  class="button" id="removepatient" name="button" value="addDoc"> Register</button>
 
 
 
-                <button id="remove-doctor" name="button" value="removeDoc">Remove Doctor </button>
+                <button class="button" id="remove-doctor" name="button" value="removeDoc">Remove </button>
 
-                 <button id="remove-doctor" name="button" value="addchanel">Add Channelling Time </button>
+                 <button class="button" id="remove-doctor" name="button" value="addchanel">Channelling Time </button>
 
 {#                <a href="{{ url_for('#')}}">#}
 {#                    <button id="edit-details"> Edit Details</button>#}
@@ -157,6 +159,39 @@
         </main>
 
     </div>
+
+    <div class="popupWindow" id="popupMsgWindow" style="color: white">
+        <img src="/static/logout.png">
+        <h2>Log Out</h2>
+        <br>
+        <h4>Are you sure you want to logout?</h4>
+        <br>
+        <br>
+        <table>
+            <tr>
+                <td class="tWinData">
+                    <button class="btnWindow" type="button" onclick="closePopup()">Cancel</button>
+                </td>
+
+                <td class="tWinData">
+                    <a href="{{ url_for('logout') }}" ><button class="btnWindow" type="button">Logout</button></a>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+
+
+ <script>
+        var popup=document.getElementById("popupMsgWindow");
+
+        function openPopup() {
+            popup.classList.add("open-popupWindow")
+        }
+        function closePopup() {
+            popup.classList.remove("open-popupWindow")
+        }
+    </script>
 
 </body>
 

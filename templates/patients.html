@@ -8,6 +8,8 @@
     <link rel="stylesheet" href='../static/admin.css'>
 {#    <link rel="stylesheet" href='../static/Patients.css'>#}
     <link rel="stylesheet" href='../static/doctors.css'>
+    <link rel="stylesheet" href="/static/stylePopupWindow.css">
+
 
 </head>
 
@@ -40,7 +42,7 @@
                 </li>
 
                 <li>
-                    <a href="{{ url_for('logout') }}"><span class="las la-sign-out-alt"></span>
+                        <a id="loggg" onclick="openPopup()"><span class="las la-sign-out-alt"  > </span>
                         <span>Logout</span></a>
                 </li>
             </ul>
@@ -67,15 +69,15 @@
                 </div>
                 <br>
 
-                <button   id="removepatient" name="button" value="searchPat"> Search Patient</button>
+                <button class="button"  id="removepatient" name="button" value="searchPat"> Search Patient</button>
 
 
 
-                <button   id="removepatient" name="button" value="addPat"> Add Patient</button>
+                <button class="button"  id="removepatient" name="button" value="addPat"> Add Patient</button>
 
 
 
-                <button id="remove-doctor" name="button" value="removePat">Remove Patient </button>
+                <button class="button" id="remove-doctor" name="button" value="removePat">Remove Patient </button>
                 <br>
 
 
@@ -164,6 +166,38 @@
         </main>
 
     </div>
+    <div class="popupWindow" id="popupMsgWindow" style="color: white">
+        <img src="/static/logout.png">
+        <h2>Log Out</h2>
+        <br>
+        <h4>Are you sure you want to logout?</h4>
+        <br>
+        <br>
+        <table>
+            <tr>
+                <td class="tWinData">
+                    <button class="btnWindow" type="button" onclick="closePopup()">Cancel</button>
+                </td>
+
+                <td class="tWinData">
+                    <a href="{{ url_for('logout') }}" ><button class="btnWindow" type="button">Logout</button></a>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+
+
+ <script>
+        var popup=document.getElementById("popupMsgWindow");
+
+        function openPopup() {
+            popup.classList.add("open-popupWindow")
+        }
+        function closePopup() {
+            popup.classList.remove("open-popupWindow")
+        }
+    </script>
 
 </body>
 
