@@ -149,7 +149,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
 
-
+# the image processing and then predict the disease
 @app.route('/predict', methods=['GET', 'POST'])
 def upload_predict():
     msg = ""
@@ -182,79 +182,100 @@ def upload_predict():
             msg = f'  {class_name} Disease detected with a probability of {pre * 100: 6.2f} %'
     return render_template("scanSkin.html", msg=msg)
 
-
+# footer for the entire web page
 @app.route('/footer', methods=['GET', 'POST'])
 def footer():
     return render_template("footer.html")
 
+# header for the entire web page
 @app.route('/header', methods=['GET', 'POST'])
 def header():
     return render_template("header.html")
 
-
+#return home page
 @app.route('/', methods=['GET', 'POST'])
 def home():
     return render_template("home.html")
 
-
+# return the appointment booking page
 @app.route('/chanellpage',methods=['Get','POST'])
 def chan():
     return render_template("channelling.html")
 
+# return the doctors page for the dashboard
 @app.route('/docDash',methods=['Get','POST'])
 def docD():
     return render_template("doctors.html")
     # return redirect(url_for('doctor_search'))
 
-
+#return menu page
 @app.route('/Clinic',methods=['Get','POST'])
 def Clinic():
     return render_template("main.html")
 
 
-
-
-
+# return the user prescription page
 @app.route('/prescriptionPage',methods=['Get','POST'])
 def presPg():
     return render_template("prescription.html")
 
+#return the dashboard main page with database summary
 @app.route('/adminDashboard',methods=['Get','POST'])
 def adminDashboardRedirect():
     if 'loggedin' in session:
 
         conn = mysqldb.connect()
         cursor = conn.cursor()
+
+        # total number of doctors registered
         cursor.execute('SELECT COUNT(*) FROM Doctor')
         noDoc=cursor.fetchone()[0]
+
+        # total number of users registered
         cursor.execute('SELECT COUNT(*) FROM User')
         noPat = cursor.fetchone()[0]
+
+        # Ongoing channelling count
         cursor.execute('SELECT COUNT(*) FROM Channelling WHERE status LIKE "%Pending%"')
         noApp = cursor.fetchone()[0]
+
+        # total number of channelling
         cursor.execute('SELECT COUNT(*) FROM Channelling')
         totApp = cursor.fetchone()[0]
 
         return render_template('admindashboard.html',noDoc=noDoc,noPat=noPat,noApp=noApp,totApp=totApp)
 
+# admin and user login authentication
 @app.route('/login', methods=['GET', 'POST'])
 def login_new():
     msg = ''
     try:
         if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
+
+            #initializing variables to user inputs
             username = request.form['username']
             password = request.form['password']
+
             conn = mysqldb.connect()
             cursor = conn.cursor()
+
+            # check the radio box ticked to log in as an admin
             if request.form.get('admin') == 'on':
                 cursor.execute('SELECT * FROM Admin WHERE email = %s ', (username))
                 account = cursor.fetchone()
+
+                # check the account is availale from the given email
                 if account:
-                    # check = check_password_hash(account[4], password)
+
+                    # password validation
                     if account[4] == password:
+                        # creating session token for the admin
                         session['loggedin'] = True
                         session['id'] = account[0]
                         session['username'] = account[3]
                         msg = 'Logged in successfully !'
+
+                        # redirect to the admin dashboard
                         return redirect(url_for('adminDashboardRedirect'))
                     else:
                         msg = 'Incorrect username / password !'
@@ -262,21 +283,29 @@ def login_new():
                 else:
                     msg = 'Account dose not exist From this email address '
             else:
+                # user login authentication
                 cursor.execute('SELECT * FROM User WHERE email = %s ', (username))
                 account = cursor.fetchone()
+
+                # checking the email already registered or not
                 if account:
+                    # passsword validation using hashcode
                     check = check_password_hash(account[5], password)
                     if check:
+                        # creating session for the user
                         session['loggedin'] = True
                         session['id'] = account[0]
                         session['username'] = account[4]
                         msg = 'Logged in successfully !'
+
+                        # redirect to the menu page
                         return render_template('main.html')
                     else:
                         msg = 'Incorrect username / password !'
 
                 else:
                     msg = 'Account dose not exist From this email address '
+
 
         return render_template('login.html', msg=msg)
 
@@ -288,6 +317,8 @@ def login_new():
 @app.route('/logout')
 def logout():
     try:
+
+        # deleting upload files or files saved in TestReport file and the Prescription directory
         pdfList = os.listdir('./static/TestReports')
         testReportsList = ['./static/TestReports/' + image for image in pdfList if
                            ("userId{0}".format(str(session['id']))) in image]
@@ -298,6 +329,8 @@ def logout():
                      ("userId{0}".format(str(session['id']))) in image]
         for image in imagelist:
             os.remove(image)
+
+        # clear the session
         session.pop('loggedin', None)
         session.pop('id', None)
         session.pop('username', None)
@@ -306,11 +339,12 @@ def logout():
         print(e)
 
 
-
+# return doctor registration form when access via dashboard
 @app.route('/regDoc', methods=['GET', 'POST'])
 def regDoc():
     return render_template('doctor-register.html')
 
+# return the patient section in the dashboard
 @app.route('/pat', methods=['GET', 'POST'])
 def pat():
     return render_template('patients.html')
@@ -322,6 +356,8 @@ def register():
     try:
         msg = ''
         if request.method == 'POST' and 'firstname' in request.form and 'lastname' in request.form and 'age' in request.form and 'email' in request.form and 'password' in request.form and 'gender' in request.form and 'address' in request.form and 'mobNo' in request.form:
+
+            # initializing variables
             firstname = request.form['firstname']
             lastname = request.form['lastname']
             age = request.form['age']
@@ -335,8 +371,12 @@ def register():
             cursor = conn.cursor()
             cursor.execute('SELECT * FROM User WHERE email = %s', (email,))
             account = cursor.fetchone()
+
+            # checking the email is already registered
             if account:
                 msg = 'Account already exists !'
+
+            #validate user inputs
             elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
                 msg = 'Invalid email address !'
             elif containsNumber(firstname) or containsNumber(lastname):
@@ -370,11 +410,13 @@ def register():
     except Exception as e:
         print(e)
 
-
+# register user by admin
 @app.route('/registerUserByAd', methods=['GET', 'POST'])
 def register_byAd():
     msg = ''
     if request.method == 'POST' and 'firstname' in request.form and 'lastname' in request.form and 'age' in request.form and 'email' in request.form and 'password' in request.form and 'gender' in request.form and 'address' in request.form and 'mobNo' in request.form:
+
+
         firstname = request.form['firstname']
         lastname = request.form['lastname']
         age = request.form['age']
@@ -511,6 +553,7 @@ def doctor_search():
 
     # display selected doctor
 
+# remove doctor as required
 @app.route('/doctorRemove/<email>', methods=['GET', 'POST'])
 def doctor_remove(email):
 
@@ -544,7 +587,7 @@ def doctor_remove(email):
 
 # patient database management
 
-#display selected doctor
+#display selected patient without password in the dashboard
 
 @app.route('/patientSearch', methods=['GET','POST'])
 def patient_Search():
@@ -581,6 +624,7 @@ def patient_Search():
 
     # display selected doctor
 
+# remove patients by admin
 @app.route('/patientRemove/<email>', methods=['GET', 'POST'])
 def patient_remove(email):
 
@@ -650,9 +694,9 @@ def displayPress():
     except Exception as e:
         print(e)
 
-# display testReport
 
-# prescription display
+
+# testreport display
 @app.route("/displayTestReport")
 def displayTestReport():
     try:
@@ -692,12 +736,12 @@ def displayTestReport():
         print(e)
 
 
-#check file extention
+#check allowed file extention
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-# add prescription
+# add prescription by user
 
 @app.route('/addPress', methods=['GET','POST'])
 def addPress():
@@ -715,6 +759,8 @@ def addPress():
                 if file.filename == '':
                     flash('No selected file')
                     return redirect(request.url)
+
+                # upload the prescription to the server and validate and encode it
                 if file and allowed_file(file.filename):
                     file.filename = "img" + str(session['id']) + ".jpeg"
                     # filename = secure_filename(file.filename)
@@ -748,7 +794,7 @@ def addPress():
     except Exception as e:
         print(e)
 
-# TEST
+# add clinic test reports by admin
 
 @app.route('/addTest', methods=['GET','POST'])
 def addTest():
@@ -780,9 +826,10 @@ def addTest():
                 if file.filename == '':
                     msg = 'Error ! No file Selected'
                     return render_template("clinicReportAdd.html", msg=msg)
+
+                # save the file with renamed version in the server
                 if file and allowed_file(file.filename):
                     file.filename = "img" + str(session['id']) + ".pdf"
-                    # filename = secure_filename(file.filename)
                     file_location = os.path.join(UPLOAD_FOLDER_TEST, file.filename)
                     file.save(file_location)
 
@@ -814,12 +861,12 @@ def addTest():
 
 
 
-
+# return to the main menu
 @app.route('/main', methods=['GET','POST'])
 def main():
     return render_template('main.html')
 
-
+# redirect to the admin dashboard
 @app.route('/adminDashboard', methods=['GET','POST'])
 def adminDashboard():
     return render_template('admindashboard.html')
@@ -833,6 +880,7 @@ def displayProfile():
         if 'loggedin' in session:
             conn = mysqldb.connect()
             cursor = conn.cursor()
+            # fetch all details for the relavant user to display in the profile card
             cursor.execute('SELECT * FROM User WHERE id = % s', (session['id'],))
             account = cursor.fetchone()
             return render_template("profile.html", tab=0, account=account)
@@ -841,7 +889,7 @@ def displayProfile():
     except Exception as e:
         print(e)
 
-# update profile
+# update profile details except email and the password
 @app.route("/updateUser", methods=['GET', 'POST'])
 def updateUser():
     try:
@@ -859,6 +907,8 @@ def updateUser():
                 age = request.form['age']
                 address = request.form['address']
                 mobileNo = request.form['mobNo']
+
+                # validate updated detials
                 if containsNumber(firstname) or containsNumber(lastname):
                     msg = 'First name and Last name must contain only characters!'
                 elif validate(age) or len(age) > 3:
@@ -900,14 +950,18 @@ def updatePassword():
                 oldPass = request.form['oldPass']
                 newPass = request.form['newPass']
                 finalPass = request.form['finalPass']
+
+                # check the entered email validation
                 if (session['username'] == email):
                     conn = mysqldb.connect()
                     cursor = conn.cursor()
                     cursor.execute('SELECT * FROM User WHERE email = %s ', (session['username']))
                     account = cursor.fetchone()
                     if account:
+                        #  old password validation
                         check = check_password_hash(account[5], oldPass)
                         if check:
+                            # new password validation
                             if (newPass == finalPass):
                                 _hashed_password = generate_password_hash(newPass)
                                 sql = 'UPDATE User SET  password =% s WHERE id =%s '
@@ -941,10 +995,13 @@ def channelling():
             cursor = conn.cursor()
             if (request.form.get('button') == 'cancel'):
                 return redirect('main')
+
+            # fetching account details
             cursor.execute('SELECT * FROM User WHERE id = % s', (session['id'],))
             account = cursor.fetchone()
 
             if request.method == 'POST' and 'channelId' in request.form:
+                # delete channelling receipt as necessary
                 channelId = request.form['channelId']
                 conn = mysqldb.connect()
                 cursor = conn.cursor()
@@ -952,6 +1009,7 @@ def channelling():
                 conn.commit()
                 msg = 'Channel number ' + channelId + ' deleted successfully'
 
+            # fetch all channelling records for the relavant user
             cursor.execute('SELECT c.name as name, c.channelId As id, c.channel_date As date,  c.status as status, d.docFirstName as fname, d.docLastName As last, c.channel_time As start, c.appointment_Num As num FROM Channelling c JOIN Doctor d ON c.doctorId=d.docId  WHERE c.id = % s',(session['id'],))
             record = cursor.fetchall()
             return render_template("profile.html", tab=3, account=account, record=record, msg=msgChan)
@@ -960,7 +1018,7 @@ def channelling():
     except Exception as e:
         print(e)
 
-# testChanneling
+# booking an appointment
 
 @app.route('/addChannel', methods=['GET','POST'])
 def add_channel():
@@ -977,6 +1035,7 @@ def add_channel():
                 email = request.form['email']
                 mobNo = request.form['mobNo']
 
+                # input validation
                 if not re.match(r'[^@]+@[^@]+\.[^@]+', email):
                     msg = 'Invalid email address !'
                 elif containsNumber(name):
@@ -985,24 +1044,34 @@ def add_channel():
                     # must see the validation here
                     msg = 'Phone Number must contain only 10 numbers!'
 
+                # checking available doctors for the selected date
                 if (request.form.get('button') == 'checkOption'):
                     appointment = request.form['appointment']
+                    # get the current date
                     CurrentDate = datetime.now().date()
+                    # converting appointment date string type to date type
                     ExpectedDate = parser.parse(appointment).date()
+
+                    # check the inserted day is passed
                     if CurrentDate > ExpectedDate:
                         msgChan='Invalid Date! Please Select Valid Date'
                         return render_template("Channelling.html", msg=msgChan)
 
+                    # extracting the day from the date
                     year, month, day = (int(x) for x in appointment.split('-'))
                     ans = date(year, month, day)
                     weekday = ans.strftime("%A")
+                    # checking available doctors for the selected day
                     cursor.execute(
                         'SELECT dt.doctorId AS docID, dt.day AS day, dt.timeStart AS start, dt.timeEnd AS end, d.docFirstName AS firstName, d.docLastName AS lastName FROM DoctorTimeSlots dt JOIN Doctor d ON dt.doctorId = d.docId WHERE day = % s',
                         (weekday))
                     doctorList = cursor.fetchall()
+                    # check the doctors are not available for the selected date
                     if(doctorList == ()):
                         msgChan="Try Again With Another Date. There Are No Doctors Available For The Selected Date."
                         return render_template("Channelling.html",name=name,appointment=appointment, email=email, mobNo=mobNo, msg=msgChan)
+
+                    # make a tuple from available doctors with the next appointment number accordingly
                     for doc in doctorList:
                         doctorListAppointment = list(doctorList)
                         cursor.execute(
@@ -1030,9 +1099,11 @@ def add_channel():
                     confirmDate = request.form['appointment']
 
                     if(data ==''):
+                        # check the user selected a doctor
                         msgChan = "Select Doctor Before Booking an Appointment"
                         return render_template("Channelling.html", msg=msgChan)
 
+                    # seperate captured inputs and initialize to seprate variables
                     doctorId, appointmentNumber,appoitmentTime = data.split('/')
                     status = 'Pending'
                     msg = request.form['message']
@@ -1049,7 +1120,7 @@ def add_channel():
     except Exception as e:
         print(e)
 
-# update password
+# update channeling status
 @app.route("/updateChanStatus", methods=['GET', 'POST'])
 def updateChanStatus():
     try:
@@ -1097,7 +1168,9 @@ def docTime():
         msg = ''
         if request.method == 'POST' and 'firstname' in request.form and 'lastname' in request.form and 'email' in request.form and 'day' in request.form and 'startTime' in request.form and 'endTime' in request.form :
 
+            # store the selected day in title form
             day = request.form['day'].title()
+
             if (day == ''):
                 msg='Error! Complete the day input field.'
                 return render_template('timeadd.html', msg=msg)
@@ -1110,7 +1183,9 @@ def docTime():
 
             cursor.execute('SELECT docId FROM Doctor WHERE docEmail = %s', (email,))
             account = cursor.fetchone()
+            # check the email is registered
             if account:
+                # capture the doctor id from the fetch record
                 docId=account[0]
                 sql = "INSERT INTO DoctorTimeSlots(doctorId,day,timeStart,timeEnd) VALUES(%s, %s, %s,%s)"
                 data = (docId,day,timeStart,timeEnd)
@@ -1130,6 +1205,8 @@ def docTime():
     except Exception as e:
         print(e)
 
+
+# input validation
 def containsNumber(value):
     for character in value:
         if character.isdigit():
