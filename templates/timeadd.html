@@ -10,22 +10,22 @@
 
 <body>
     <div class="container">
-        <div class="title">Channelling timeAdd</div>
+        <div class="title">Add Channelling Time</div>
         <div class="msg">{{ msg }}</div>
         <div class="content">
             <form action="{{ url_for('docTime')}}" method="post" autocomplete="off">
                 <div class="user-details">
                     <div class="input-box">
-                        <span class="details">Doctors First Name</span>
+                        <span class="details">Doctor's First Name</span>
                         <input type="text" name="firstname" id="firstname" placeholder="Enter Doctor First Name">
                     </div>
                     <div class="input-box">
-                        <span class="details"> Doctor Last Name </span>
+                        <span class="details"> Doctor's Last Name </span>
                         <input type="text" name="lastname" id="lastname" placeholder="Enter Doctor Last Name">
                     </div>
 
                     <div class="input-box">
-                        <span class="details">Doctor Email</span>
+                        <span class="details">Doctor's Email</span>
                         <input type="email" id="email" name="email" placeholder="Enter Doctor Email" required>
                     </div>
                     <div class="formElement">
