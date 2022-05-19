@@ -4,13 +4,8 @@ import pymysql
 
 
 def connection():
-    # mysqldb=mysql.connector.connect(host="localhost", user="root",password="")#established connection
-    mysqldb = pymysql.connect(
-        host='skinsafe.cfjzzf8ivqho.us-east-1.rds.amazonaws.com',
-        port=3306,
-        user='admin',
-        password='12345678',
-        db='SkinSafe',
+    mysqldb=mysql.connector.connect(host="localhost", user="root",password="")#established connection
+
 
 
 
